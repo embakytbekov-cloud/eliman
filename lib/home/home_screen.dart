@@ -1,0 +1,264 @@
+import 'package:flutter/material.dart';
+import 'widgets/category_item.dart';
+import 'widgets/service_item.dart';
+import 'widgets/why_choose_us.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 10),
+
+// ---- HEADER ----
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.location_on_outlined, size: 20),
+                      const SizedBox(width: 6),
+                      const Text(
+                        "New York, NY",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Icon(Icons.keyboard_arrow_down),
+                      const Spacer(),
+                      const Icon(Icons.calendar_today_outlined, size: 20),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+// Title
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "ELIMAN",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+// Subtitle
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "Service pros on demand",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+// ---- SEARCH ----
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Container(
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Row(
+                      children: [
+                        SizedBox(width: 16),
+                        Icon(Icons.search, color: Colors.black54),
+                        SizedBox(width: 12),
+                        Text(
+                          "Search services...",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+// ---- CATEGORIES ----
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "Categories",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const SizedBox(height: 20),
+                SizedBox(
+                  height: 220, // стало выше, чтобы влезли подписи и 3 ряда
+                  child: GridView.count(
+                    crossAxisCount: 4,
+                    physics: const NeverScrollableScrollPhysics(),
+                    childAspectRatio: 0.8,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    children: const [
+                      CategoryItem(
+                        icon: Icons.grid_view,
+                        label: "Top",
+                        highlighted: true, // зелёный, как на макете
+                      ),
+                      CategoryItem(
+                          icon: Icons.cleaning_services, label: "Cleaning"),
+                      CategoryItem(icon: Icons.handyman, label: "Handyman"),
+                      CategoryItem(icon: Icons.local_shipping, label: "Moving"),
+
+                      CategoryItem(icon: Icons.chair, label: "Furniture"),
+                      CategoryItem(
+                          icon: Icons.lock_outline, label: "Locksmith"),
+                      CategoryItem(icon: Icons.settings, label: "Appliance"),
+                      CategoryItem(icon: Icons.delete_outline, label: "Junk"),
+
+                      CategoryItem(icon: Icons.ac_unit, label: "Snow"),
+                      CategoryItem(icon: Icons.donut_large, label: "Tire"),
+                      CategoryItem(
+                          icon: Icons.local_car_wash, label: "Car cleaning"),
+                      // можешь ещё одну категорию добавить сюда, если захочешь
+                    ],
+                  ),
+                ),
+// ---- TOP SERVICES TITLE ----
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Top Services",
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        "10 services",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+// ---- SERVICES GRID ----
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: demoServices.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 0.78,
+                    ),
+                    itemBuilder: (context, index) {
+                      return ServiceItem(service: demoServices[index]);
+                    },
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+// ---- WHY CHOOSE US ----
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    "Why choose us?",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: WhyChooseUs(),
+                ),
+
+                const SizedBox(height: 40),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ---- DEMO DATA ----
+final List<Map<String, dynamic>> demoServices = [
+  {
+    "badge": "Popular",
+    "title": "Tire Change",
+    "subtitle": "Mobile tire replacement",
+    "price": "\$60 - \$120"
+  },
+  {
+    "badge": "Emergency",
+    "title": "House Lockout",
+    "subtitle": "Emergency lockout",
+    "price": "\$75 - \$150"
+  },
+  {
+    "badge": "Popular",
+    "title": "Lock Installation",
+    "subtitle": "Install new locks",
+    "price": "\$80 - \$200"
+  },
+  {
+    "badge": "Popular",
+    "title": "TV Mounting",
+    "subtitle": "Wall mounting",
+    "price": "\$75 - \$150"
+  },
+  {
+    "badge": "Popular",
+    "title": "Furniture Assembly",
+    "subtitle": "Assemble furniture",
+    "price": "\$60 - \$150"
+  },
+  {
+    "badge": "Popular",
+    "title": "Packing",
+    "subtitle": "Professional packing",
+    "price": "\$150 - \$400"
+  },
+];
