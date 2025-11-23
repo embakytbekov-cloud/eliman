@@ -3,13 +3,41 @@ import 'widgets/category_item.dart';
 import 'widgets/service_item.dart';
 import 'widgets/why_choose_us.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
+      // ---- BOTTOM NAV BAR ----
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() => _currentIndex = index);
+        },
+        selectedItemColor: Colors.teal,
+        unselectedItemColor: Colors.grey.shade500,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month), label: "Bookings"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline), label: "Profile"),
+        ],
+      ),
+
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -19,7 +47,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 const SizedBox(height: 10),
 
-// ---- HEADER ----
+                // ---- HEADER ----
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -29,9 +57,7 @@ class HomeScreen extends StatelessWidget {
                       const Text(
                         "New York, NY",
                         style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                        ),
+                            fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       const Icon(Icons.keyboard_arrow_down),
                       const Spacer(),
@@ -42,7 +68,7 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-// Title
+                // ---- TITLE ----
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
@@ -54,24 +80,20 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 4),
 
-// Subtitle
+                // ---- SUBTITLE ----
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     "Service pros on demand",
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 15, color: Colors.grey),
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
-// ---- SEARCH ----
+                // ---- SEARCH ----
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Container(
@@ -87,11 +109,8 @@ class HomeScreen extends StatelessWidget {
                         SizedBox(width: 12),
                         Text(
                           "Search services...",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                          ),
-                        )
+                          style: TextStyle(fontSize: 16, color: Colors.black54),
+                        ),
                       ],
                     ),
                   ),
@@ -99,54 +118,46 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
-// ---- CATEGORIES ----
+                // ---- CATEGORIES ----
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     "Categories",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                   ),
                 ),
 
                 const SizedBox(height: 16),
 
-                const SizedBox(height: 20),
                 SizedBox(
-                  height: 220, // стало выше, чтобы влезли подписи и 3 ряда
+                  height: 220,
                   child: GridView.count(
                     crossAxisCount: 4,
                     physics: const NeverScrollableScrollPhysics(),
-                    childAspectRatio: 0.8,
+                    childAspectRatio: 0.78,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     children: const [
                       CategoryItem(
-                        icon: Icons.grid_view,
-                        label: "Top",
-                        highlighted: true, // зелёный, как на макете
-                      ),
+                          icon: Icons.grid_view,
+                          label: "Top",
+                          highlighted: true),
                       CategoryItem(
                           icon: Icons.cleaning_services, label: "Cleaning"),
                       CategoryItem(icon: Icons.handyman, label: "Handyman"),
                       CategoryItem(icon: Icons.local_shipping, label: "Moving"),
-
                       CategoryItem(icon: Icons.chair, label: "Furniture"),
                       CategoryItem(
                           icon: Icons.lock_outline, label: "Locksmith"),
                       CategoryItem(icon: Icons.settings, label: "Appliance"),
-                      CategoryItem(icon: Icons.delete_outline, label: "Junk"),
 
-                      CategoryItem(icon: Icons.ac_unit, label: "Snow"),
-                      CategoryItem(icon: Icons.donut_large, label: "Tire"),
+                      // ---- NEW !!! Tire (Mobile) ----
                       CategoryItem(
-                          icon: Icons.local_car_wash, label: "Car cleaning"),
-                      // можешь ещё одну категорию добавить сюда, если захочешь
+                          icon: Icons.circle_outlined, label: "Tire (Mobile)"),
                     ],
                   ),
                 ),
-// ---- TOP SERVICES TITLE ----
+
+                // ---- TOP SERVICES ----
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -155,16 +166,12 @@ class HomeScreen extends StatelessWidget {
                       const Text(
                         "Top Services",
                         style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                        ),
+                            fontSize: 20, fontWeight: FontWeight.w700),
                       ),
                       Text(
                         "10 services",
                         style: TextStyle(
-                          fontSize: 15,
-                          color: Colors.grey.shade600,
-                        ),
+                            fontSize: 15, color: Colors.grey.shade600),
                       ),
                     ],
                   ),
@@ -172,7 +179,7 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-// ---- SERVICES GRID ----
+                // ---- SERVICES GRID ----
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: GridView.builder(
@@ -194,20 +201,16 @@ class HomeScreen extends StatelessWidget {
 
                 const SizedBox(height: 30),
 
-// ---- WHY CHOOSE US ----
+                // ---- WHY CHOOSE US ----
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Text(
                     "Why choose us?",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
                   ),
                 ),
 
                 const SizedBox(height: 16),
-
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
                   child: WhyChooseUs(),
