@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'widgets/category_item.dart';
 import 'widgets/service_item.dart';
 import 'widgets/why_choose_us.dart';
+import 'package:eliman/home/screens/cleaning_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +13,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+
+  // ⭐ ДОБАВЛЕНО — выбранная категория
+  int selectedCategory = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -136,23 +140,64 @@ class _HomeScreenState extends State<HomeScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     childAspectRatio: 0.78,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: const [
-                      CategoryItem(
-                          icon: Icons.grid_view,
-                          label: "Top",
-                          highlighted: true),
-                      CategoryItem(
-                          icon: Icons.cleaning_services, label: "Cleaning"),
-                      CategoryItem(icon: Icons.handyman, label: "Handyman"),
-                      CategoryItem(icon: Icons.local_shipping, label: "Moving"),
-                      CategoryItem(icon: Icons.chair, label: "Furniture"),
-                      CategoryItem(
-                          icon: Icons.lock_outline, label: "Locksmith"),
-                      CategoryItem(icon: Icons.settings, label: "Appliance"),
+                    children: [
+                      // ⭐⭐ Я СДЕЛАЛ ВСЕ КАТЕГОРИИ КЛИКАБЕЛЬНЫМИ ⭐⭐
 
-                      // ---- NEW !!! Tire (Mobile) ----
                       CategoryItem(
-                          icon: Icons.circle_outlined, label: "Tire (Mobile)"),
+                        icon: Icons.grid_view,
+                        label: "Top",
+                        highlighted: selectedCategory == 0,
+                        onTap: () => setState(() => selectedCategory = 0),
+                      ),
+                      CategoryItem(
+                        icon: Icons.cleaning_services,
+                        label: "Cleaning",
+                        highlighted: selectedCategory == 1,
+                        onTap: () {
+                          setState(() => selectedCategory = 1);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CleaningScreen()),
+                          );
+                        },
+                      ),
+                      CategoryItem(
+                        icon: Icons.handyman,
+                        label: "Handyman",
+                        highlighted: selectedCategory == 2,
+                        onTap: () => setState(() => selectedCategory = 2),
+                      ),
+                      CategoryItem(
+                        icon: Icons.local_shipping,
+                        label: "Moving",
+                        highlighted: selectedCategory == 3,
+                        onTap: () => setState(() => selectedCategory = 3),
+                      ),
+                      CategoryItem(
+                        icon: Icons.chair,
+                        label: "Furniture",
+                        highlighted: selectedCategory == 4,
+                        onTap: () => setState(() => selectedCategory = 4),
+                      ),
+                      CategoryItem(
+                        icon: Icons.lock_outline,
+                        label: "Locksmith",
+                        highlighted: selectedCategory == 5,
+                        onTap: () => setState(() => selectedCategory = 5),
+                      ),
+                      CategoryItem(
+                        icon: Icons.settings,
+                        label: "Appliance",
+                        highlighted: selectedCategory == 6,
+                        onTap: () => setState(() => selectedCategory = 6),
+                      ),
+                      CategoryItem(
+                        icon: Icons.circle_outlined,
+                        label: "Tire (Mobile)",
+                        highlighted: selectedCategory == 7,
+                        onTap: () => setState(() => selectedCategory = 7),
+                      ),
                     ],
                   ),
                 ),
@@ -226,6 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
+// ---- SERVICES LIST ----
 final List<Map<String, dynamic>> demoServices = [
   {
     "badge": "Popular",
