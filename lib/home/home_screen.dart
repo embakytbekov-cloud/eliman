@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisCount: 2,
                       mainAxisSpacing: 16,
                       crossAxisSpacing: 16,
-                      childAspectRatio: 0.78,
+                      childAspectRatio: 0.70,
                     ),
                     itemBuilder: (context, index) {
                       return ServiceItem(service: demoServices[index]);
@@ -226,42 +226,75 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// ---- DEMO DATA ----
 final List<Map<String, dynamic>> demoServices = [
   {
     "badge": "Popular",
-    "title": "Tire Change",
-    "subtitle": "Mobile tire replacement",
-    "price": "\$60 - \$120"
+    "title": "Tire Change (Mobile)",
+    "subtitle": "Mobile tire replacement service",
+    "price": "\$60 - \$120",
+    "image": "assets/images/tire_change.jpg"
   },
   {
     "badge": "Emergency",
     "title": "House Lockout",
-    "subtitle": "Emergency lockout",
-    "price": "\$75 - \$150"
+    "subtitle": "Emergency lockout service",
+    "price": "\$75 - \$150",
+    "image": "assets/images/house_lockout.jpg"
   },
   {
     "badge": "Popular",
     "title": "Lock Installation",
     "subtitle": "Install new locks",
-    "price": "\$80 - \$200"
+    "price": "\$80 - \$200",
+    "image": "assets/images/lock_installation.jpg"
   },
   {
     "badge": "Popular",
     "title": "TV Mounting",
-    "subtitle": "Wall mounting",
-    "price": "\$75 - \$150"
+    "subtitle": "Professional TV wall mounting",
+    "price": "\$75 - \$150",
+    "image": "assets/images/tv_mounting.jpg"
   },
   {
     "badge": "Popular",
     "title": "Furniture Assembly",
-    "subtitle": "Assemble furniture",
-    "price": "\$60 - \$150"
+    "subtitle": "Assemble any furniture",
+    "price": "\$60 - \$150",
+    "image": "assets/images/furniture_assembly.jpg"
   },
   {
     "badge": "Popular",
     "title": "Packing",
-    "subtitle": "Professional packing",
-    "price": "\$150 - \$400"
+    "subtitle": "Professional packing service",
+    "price": "\$150 - \$400",
+    "image": "assets/images/packing.jpg"
+  },
+  {
+    "badge": "Popular",
+    "title": "Washer Repair",
+    "subtitle": "Washing machine repair",
+    "price": "\$90 - \$250",
+    "image": "assets/images/washer_repair.jpg"
+  },
+  {
+    "badge": "Popular",
+    "title": "Full Apartment Move",
+    "subtitle": "Complete moving service",
+    "price": "\$300 - \$800",
+    "image": "assets/images/full_apartment_move.jpg"
+  },
+  {
+    "badge": "Popular",
+    "title": "Car Lockout",
+    "subtitle": "Emergency car lockout service",
+    "price": "\$60 - \$120",
+    "image": "assets/images/car_lockout.jpg"
+  },
+  {
+    "badge": "Popular",
+    "title": "Standard Cleaning",
+    "subtitle": "Regular home cleaning service",
+    "price": "\$80 - \$150",
+    "image": "assets/images/standard_cleaning.jpg"
   },
 ];

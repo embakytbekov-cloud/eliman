@@ -22,5 +22,15 @@ flutter:
 
   uses-material-design: true
 
+
   assets:
-    - assets/images/
+    - assets/images/tire_change.jpg
+    - assets/images/house_lockout.jpg
+    - assets/images/lock_installation.jpg
+    - assets/images/tv_mounting.jpg
+    - assets/images/furniture_assembly.jpg
+    - assets/images/packing.jpg
+    - assets/images/washer_repair.jpg
+    - assets/images/full_apartment_move.jpg
+    - assets/images/car_lockout.jpg
+    - assets/images/standard_cleaning.jpg
