@@ -41,7 +41,7 @@ class CleaningScreen extends StatelessWidget {
             crossAxisCount: 2,
             mainAxisSpacing: 16,
             crossAxisSpacing: 16,
-            childAspectRatio: 0.72,
+            childAspectRatio: 0.70, // ключ! больше пространства для фото
           ),
           itemBuilder: (context, index) {
             final item = cleaningServices[index];
@@ -61,97 +61,90 @@ class CleaningCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 8,
             offset: const Offset(0, 4),
-          ),
+          )
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-// IMAGE
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                item["image"],
-                height: 80,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// ---- IMAGE (точно как в ServiceItem) ----
+          ClipRRect(
+            borderRadius: BorderRadius.circular(14),
+            child: Image.asset(
+              item['image'],
+              height: 120, // 1-в-1 как в ServiceItem
+              width: double.infinity,
+              fit: BoxFit.cover,
             ),
+          ),
 
-            const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
-// BADGE
-            if (item["badge"] != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF23A373).withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  item["badge"],
-                  style: const TextStyle(
-                    color: Color(0xFF23A373),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                  ),
+          /// ---- BADGE ----
+          if (item['badge'] != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                item['badge'],
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
                 ),
               ),
-
-            const SizedBox(height: 8),
-
-// TITLE
-            Text(
-              item["title"],
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
             ),
 
-            const SizedBox(height: 4),
+          const SizedBox(height: 6),
 
-// SUBTITLE
-            Text(
-              item["subtitle"],
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-              ),
+          /// ---- TITLE ----
+          Text(
+            item['title'],
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
             ),
+          ),
 
-            const Spacer(),
+          const SizedBox(height: 2),
 
-// PRICE AND ARROW
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  item["price"],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF23A373),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: Colors.grey),
-              ],
+          /// ---- SUBTITLE ----
+          Text(
+            item['subtitle'],
+            maxLines: 1, // как в ServiceItem
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.grey,
             ),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 6),
+
+          /// ---- PRICE ----
+          Text(
+            item['price'],
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Colors.green,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -162,7 +155,7 @@ final List<Map<String, dynamic>> cleaningServices = [
     "badge": "Popular",
     "title": "Standard Cleaning",
     "subtitle": "Regular home cleaning service",
-    "price": "\$80 - \$150",
+    "price": "\$90 - \$300",
     "image": "assets/images/standard_cleaning.jpg",
   },
   {
@@ -201,12 +194,48 @@ final List<Map<String, dynamic>> cleaningServices = [
     "title": "Post-Construction Cleaning",
     "subtitle": "Clean up after construction work",
     "price": "\$200 - \$400",
-    "image": "assets/images/post_construction.jpg",
+    "image": "assets/images/post_construction_cleaning.jpg",
   },
   {
-    "title": "After-Party Cleaning",
-    "subtitle": "Full cleaning after events",
+    "title": "Carpet-Cleaning",
+    "subtitle": "Professional service provider",
     "price": "\$120 - \$250",
-    "image": "assets/images/after_party.jpg",
+    "image": "assets/images/carpet_cleaning.jpg",
+  },
+  {
+    "title": "Car-standard cleaning",
+    "subtitle": "Detailed Interior Cleaning",
+    "price": "\$120 - \$140",
+    "image": "assets/images/car_standard_cleaning.jpg",
+  },
+  {
+    "title": "car-deep cleaning",
+    "subtitle": "Thorough Interior Cleaning",
+    "price": "\$300 - \$500",
+    "image": "assets/images/car_deep_cleaning.jpg",
+  },
+  {
+    "title": "Truck Cabin refresh",
+    "subtitle": "Standard Truck Interior Cleaning",
+    "price": "\$160-250\$",
+    "image": "assets/images/truck_cabin_cleaning.jpg",
+  },
+  {
+    "title": "Truck Elit Premium",
+    "subtitle": "Flawless cleanliness for you truck",
+    "price": "\$400 -700\$",
+    "image": "assets/images/truck_deep_cleaning.jpg",
+  },
+  {
+    "title": "Driveway cleaning",
+    "subtitle": "Clear driveway snow",
+    "price": "\$80-120\$",
+    "image": "assets/images/driveway_cleaning.jpg",
+  },
+  {
+    "title": "sidewalk cleaning",
+    "subtitle": "Clear driveway snow",
+    "price": "\60-100\$",
+    "image": "assets/images/sidewalk_cleaning.jpg",
   },
 ];

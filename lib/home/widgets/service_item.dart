@@ -8,7 +8,7 @@ class ServiceItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(18),
@@ -23,22 +23,22 @@ class ServiceItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ---- IMAGE (фиксированная высота) ----
+          /// ---- IMAGE (увеличено!) ----
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
             child: Image.asset(
               service['image'],
-              height: 90, // ключ!
+              height: 120, // 🔥 БЫЛО 90 → СДЕЛАЛ 120
               width: double.infinity,
               fit: BoxFit.cover,
             ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
-          // ---- BADGE ----
+          /// ---- BADGE ----
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
             decoration: BoxDecoration(
               color: Colors.green.shade100,
               borderRadius: BorderRadius.circular(8),
@@ -46,32 +46,32 @@ class ServiceItem extends StatelessWidget {
             child: Text(
               service['badge'],
               style: const TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.bold,
                 color: Colors.green,
               ),
             ),
           ),
 
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
 
-          // ---- TITLE ----
+          /// ---- TITLE ----
           Text(
             service['title'],
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
           ),
 
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
 
-          // ---- SUBTITLE ----
+          /// ---- SUBTITLE ----
           Text(
             service['subtitle'],
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 13,
@@ -79,14 +79,15 @@ class ServiceItem extends StatelessWidget {
             ),
           ),
 
-          const Spacer(),
+          const SizedBox(height: 6),
 
-          // ---- PRICE ----
+          /// ---- PRICE (ПРИЖАТО БЛИЖЕ!) ----
           Text(
             service['price'],
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
+              color: Colors.green,
             ),
           ),
         ],

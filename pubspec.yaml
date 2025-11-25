@@ -34,3 +34,16 @@ flutter:
     - assets/images/full_apartment_move.jpg
     - assets/images/car_lockout.jpg
     - assets/images/standard_cleaning.jpg
+    - assets/images/deep_cleaning.jpg
+    - assets/images/move_in_cleaning.jpg
+    - assets/images/move_out_cleaning.jpg
+    - assets/images/airbnb_cleaning.jpg
+    - assets/images/office_cleaning.jpg
+    - assets/images/post_construction_cleaning.jpg
+    - assets/images/carpet_cleaning.jpg
+    - assets/images/car_standard_cleaning.jpg
+    - assets/images/car_deep_cleaning.jpg
+    - assets/images/truck_cabin_cleaning.jpg
+    - assets/images/truck_deep_cleaning.jpg
+    - assets/images/driveway_cleaning.jpg
+    - assets/images/sidewalk_cleaning.jpg
