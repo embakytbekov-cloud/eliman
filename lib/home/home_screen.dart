@@ -3,6 +3,9 @@ import 'widgets/category_item.dart';
 import 'widgets/service_item.dart';
 import 'widgets/why_choose_us.dart';
 import 'package:eliman/home/screens/cleaning_screen.dart';
+import 'screens/handyman_screen.dart';
+import 'package:eliman/home/screens/appliance_screen.dart';
+import 'package:eliman/home/screens/moving_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -166,13 +169,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icons.handyman,
                         label: "Handyman",
                         highlighted: selectedCategory == 2,
-                        onTap: () => setState(() => selectedCategory = 2),
+                        onTap: () {
+                          setState(() => selectedCategory = 2);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HandymanScreen()),
+                          );
+                        },
                       ),
                       CategoryItem(
                         icon: Icons.local_shipping,
                         label: "Moving",
                         highlighted: selectedCategory == 3,
-                        onTap: () => setState(() => selectedCategory = 3),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const MovingScreen()),
+                          );
+                        },
                       ),
                       CategoryItem(
                         icon: Icons.chair,
@@ -190,7 +206,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: Icons.settings,
                         label: "Appliance",
                         highlighted: selectedCategory == 6,
-                        onTap: () => setState(() => selectedCategory = 6),
+                        onTap: () {
+                          setState(() => selectedCategory = 6);
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => const ApplianceScreen()));
+                        },
                       ),
                       CategoryItem(
                         icon: Icons.circle_outlined,
