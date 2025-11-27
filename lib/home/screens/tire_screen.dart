@@ -172,14 +172,14 @@ final List<Map<String, dynamic>> tireServices = [
     "title": "Tire Rotation",
     "subtitle": "Rotate tires for even wear",
     "price": "\$30 - \$60",
-    "image": "assets/images/tire_rotation"
+    "image": "assets/images/tire_rotation.jpg"
   },
   {
     "badge": null,
     "title": "tire_installation",
     "subtitle": "Balance wheels on-site",
     "price": "\$50 - \$90",
-    "image": "assets/images/tire_installation_.jpg"
+    "image": "assets/images/tire_installation.jpg"
   },
   {
     "badge": "Emergency",

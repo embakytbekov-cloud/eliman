@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+
 import 'widgets/category_item.dart';
 import 'widgets/service_item.dart';
 import 'widgets/why_choose_us.dart';
-import 'package:eliman/home/screens/cleaning_screen.dart';
+
+// экраны
+import 'screens/cleaning_screen.dart';
 import 'screens/handyman_screen.dart';
-import 'package:eliman/home/screens/appliance_screen.dart';
-import 'package:eliman/home/screens/moving_screen.dart';
+import 'screens/moving_screen.dart';
 import 'screens/furniture_screen.dart';
 import 'screens/locksmith_screen.dart';
+import 'screens/appliance_screen.dart';
 import 'screens/tire_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,8 +22,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-
-  // ⭐ ДОБАВЛЕНО — выбранная категория
   int selectedCategory = 0;
 
   @override
@@ -147,14 +148,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     childAspectRatio: 0.78,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     children: [
-                      // ⭐⭐ Я СДЕЛАЛ ВСЕ КАТЕГОРИИ КЛИКАБЕЛЬНЫМИ ⭐⭐
-
+                      // TOP
                       CategoryItem(
                         icon: Icons.grid_view,
                         label: "Top",
                         highlighted: selectedCategory == 0,
-                        onTap: () => setState(() => selectedCategory = 0),
+                        onTap: () {
+                          setState(() => selectedCategory = 0);
+                        },
                       ),
+
+                      // CLEANING
                       CategoryItem(
                         icon: Icons.cleaning_services,
                         label: "Cleaning",
@@ -164,10 +168,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const CleaningScreen()),
+                              builder: (_) => const CleaningScreen(),
+                            ),
                           );
                         },
                       ),
+
+                      // HANDYMAN
                       CategoryItem(
                         icon: Icons.handyman,
                         label: "Handyman",
@@ -177,22 +184,29 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const HandymanScreen()),
+                              builder: (_) => const HandymanScreen(),
+                            ),
                           );
                         },
                       ),
+
+                      // MOVING
                       CategoryItem(
                         icon: Icons.local_shipping,
                         label: "Moving",
                         highlighted: selectedCategory == 3,
                         onTap: () {
+                          setState(() => selectedCategory = 3);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const MovingScreen()),
+                              builder: (_) => const MovingScreen(),
+                            ),
                           );
                         },
                       ),
+
+                      // FURNITURE
                       CategoryItem(
                         icon: Icons.chair,
                         label: "Furniture",
@@ -202,10 +216,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const FurnitureScreen()),
+                              builder: (_) => const FurnitureScreen(),
+                            ),
                           );
                         },
                       ),
+
+                      // LOCKSMITH
                       CategoryItem(
                         icon: Icons.lock_outline,
                         label: "Locksmith",
@@ -215,10 +232,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LocksmithScreen()),
+                              builder: (_) => const LocksmithScreen(),
+                            ),
                           );
                         },
                       ),
+
+                      // APPLIANCE
                       CategoryItem(
                         icon: Icons.settings,
                         label: "Appliance",
@@ -226,16 +246,28 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           setState(() => selectedCategory = 6);
                           Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (_) => const ApplianceScreen()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const ApplianceScreen(),
+                            ),
+                          );
                         },
                       ),
+
+                      // TIRE (MOBILE)
                       CategoryItem(
                         icon: Icons.circle_outlined,
                         label: "Tire (Mobile)",
                         highlighted: selectedCategory == 7,
-                        onTap: () => setState(() => selectedCategory = 7),
+                        onTap: () {
+                          setState(() => selectedCategory = 7);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const TireScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),

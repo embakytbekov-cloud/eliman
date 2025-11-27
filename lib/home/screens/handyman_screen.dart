@@ -204,4 +204,94 @@ final List<Map<String, dynamic>> handymanServices = [
     "price": "\$60 - \$150",
     "image": "assets/images/furniture_assembly.jpg"
   },
+  {
+    "title": "Window/door Repair",
+    "subtitle": "Fix windows anf door",
+    "price": "\$80 - \$180",
+    "image": "assets/images/window_repair.jpg"
+  },
+  {
+    "title": "Small Painting",
+    "subtitle": "Touch-up and small painting",
+    "price": "\$60 - \$150",
+    "image": "assets/images/small_painting.jpg"
+  },
+  {
+    "title": "Baby Proofing",
+    "subtitle": "Childproof your home",
+    "price": "\$80 - \$150",
+    "image": "assets/images/baby_proofing.jpg"
+  },
+  {
+    "title": "Shelf Mounting",
+    "subtitle": "Mount shelves securely",
+    "price": "\$50 - \$100",
+    "image": "assets/images/shelf_mounting.jpg"
+  },
+  {
+    "title": "Furniture Disassembly ",
+    "subtitle": "Take apart furniture for moving",
+    "price": "\$60 - \$150",
+    "image": "assets/images/furniture_disassembly.jpg"
+  },
+  {
+    "title": "Outdoor Furniture ",
+    "subtitle": "Assemble outdoor furniture",
+    "price": "\$70 - \$150",
+    "image": "assets/images/outdoor_furniture.jpg"
+  },
+  {
+    "title": "Curtain Rod Install",
+    "subtitle": "Install curtain rods and blinds",
+    "price": "\$50 - \$100",
+    "image": "assets/images/curtain_rod_install.jpg"
+  },
+  {
+    "title": "Wall Patch Repair",
+    "subtitle": "Repair wall damage",
+    "price": "\$60 - \$120",
+    "image": "assets/images/wall_patch_repair.jpg"
+  },
+  {
+    "title": "Appliance Hookup",
+    "subtitle": "Connect appliance safely",
+    "price": "\$70 - \$130",
+    "image": "assets/images/appliance_hookup.jpg"
+  },
+  {
+    "title": "Minor Plumbing",
+    "subtitle": "Small plumbing repairs",
+    "price": "\$60 - \$150",
+    "image": "assets/images/minor_plumbing.jpg"
+  },
+  {
+    "title": "Cabinet Repair",
+    "subtitle": "Fix cabinet doors and hingers",
+    "price": "\$60 - \$120",
+    "image": "assets/images/cabinet_repair.jpg"
+  },
+  {
+    "title": "Window Blinds",
+    "subtitle": "Install window blinds",
+    "price": "\$50 - \$100",
+    "image": "assets/images/window_blinds.jpg"
+  },
+  {
+    "title": "Tile Caulking",
+    "subtitle": "Recaulk tiles and tubs",
+    "price": "\$50 - \$100",
+    "image": "assets/images/tile_caulking.jpg"
+  },
+  {
+    "title": "Door Handle Fix",
+    "subtitle": "Repair or replace door handles",
+    "price": "\$50 - \$100",
+    "image": "assets/images/door_handle_fix.jpg"
+  },
+  {
+    "title": "General Handyman",
+    "subtitle": "Various home repair tasks",
+    "price": "\$60 - \$150",
+    "image": "assets/images/general_handyman.jpg"
+  },
 ];
