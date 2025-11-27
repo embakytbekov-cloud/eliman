@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eliman/home/screens/handyman_details_screen.dart';
 
 class HandymanScreen extends StatelessWidget {
   const HandymanScreen({super.key});
@@ -59,102 +60,113 @@ class HandymanCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HandymanDetailsScreen(item: item),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// IMAGE (увеличено)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.asset(
-                item["image"],
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-
-            const SizedBox(height: 6),
-
-            /// BADGE
-            if (item["badge"] != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF23A373).withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// IMAGE
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(
+                  item["image"],
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
                 ),
-                child: Text(
-                  item["badge"],
-                  style: const TextStyle(
-                    color: Color(0xFF23A373),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
+              ),
+
+              const SizedBox(height: 6),
+
+              /// BADGE
+              if (item["badge"] != null)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF23A373).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    item["badge"],
+                    style: const TextStyle(
+                      color: Color(0xFF23A373),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
-              ),
 
-            const SizedBox(height: 6),
+              const SizedBox(height: 6),
 
-            /// TITLE
-            Text(
-              item["title"],
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            const SizedBox(height: 2),
-
-            /// SUBTITLE (короче)
-            Text(
-              item["subtitle"],
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            /// PRICE
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  item["price"],
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF23A373),
-                  ),
+              /// TITLE
+              Text(
+                item["title"],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
                 ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
+              ),
+
+              const SizedBox(height: 2),
+
+              /// SUBTITLE
+              Text(
+                item["subtitle"],
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
                   color: Colors.grey,
                 ),
-              ],
-            )
-          ],
+              ),
+
+              const SizedBox(height: 6),
+
+              /// PRICE + Arrow
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    item["price"],
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF23A373),
+                    ),
+                  ),
+                  const Icon(
+                    Icons.arrow_forward_ios,
+                    size: 16,
+                    color: Colors.grey,
+                  ),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );

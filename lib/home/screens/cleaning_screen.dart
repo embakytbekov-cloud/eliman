@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eliman/home/screens/cleaning_detail_screen.dart';
 
 class CleaningScreen extends StatelessWidget {
   const CleaningScreen({super.key});
@@ -60,91 +61,101 @@ class CleaningCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          )
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// ---- IMAGE (точно как в ServiceItem) ----
-          ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Image.asset(
-              item['image'],
-              height: 120, // 1-в-1 как в ServiceItem
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CleaningDetailsScreen(item: item),
           ),
-
-          const SizedBox(height: 6),
-
-          /// ---- BADGE ----
-          if (item['badge'] != null)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-              decoration: BoxDecoration(
-                color: Colors.green.shade100,
-                borderRadius: BorderRadius.circular(8),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// ---- IMAGE ----
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.asset(
+                item['image'],
+                height: 120,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
-              child: Text(
-                item['badge'],
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
+            ),
+
+            const SizedBox(height: 6),
+
+            /// ---- BADGE ----
+            if (item['badge'] != null)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item['badge'],
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
                 ),
               ),
+
+            const SizedBox(height: 6),
+
+            /// ---- TITLE ----
+            Text(
+              item['title'],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
 
-          const SizedBox(height: 6),
+            const SizedBox(height: 2),
 
-          /// ---- TITLE ----
-          Text(
-            item['title'],
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+            /// ---- SUBTITLE ----
+            Text(
+              item['subtitle'],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                color: Colors.grey,
+              ),
             ),
-          ),
 
-          const SizedBox(height: 2),
+            const SizedBox(height: 6),
 
-          /// ---- SUBTITLE ----
-          Text(
-            item['subtitle'],
-            maxLines: 1, // как в ServiceItem
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              fontSize: 13,
-              color: Colors.grey,
+            /// ---- PRICE ----
+            Text(
+              item['price'],
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
             ),
-          ),
-
-          const SizedBox(height: 6),
-
-          /// ---- PRICE ----
-          Text(
-            item['price'],
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: Colors.green,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

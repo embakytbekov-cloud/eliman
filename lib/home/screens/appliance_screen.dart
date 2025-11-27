@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screens/appliance_details_screen.dart'; // ⭐ добавь этот импорт
 
 class ApplianceScreen extends StatelessWidget {
   const ApplianceScreen({super.key});
@@ -53,8 +54,7 @@ class ApplianceScreen extends StatelessWidget {
   }
 }
 
-// ---------------- CARD ----------------
-
+// ---------------- CARD ----------
 class ApplianceCard extends StatelessWidget {
   final Map<String, dynamic> item;
 
@@ -62,103 +62,113 @@ class ApplianceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ApplianceDetailsScreen(item: item),
           ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// IMAGE
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.asset(
-                item["image"],
-                height: 120,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            /// BADGE
-            if (item["badge"] != null)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF23A373).withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  item["badge"],
-                  style: const TextStyle(
-                    color: Color(0xFF23A373),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-
-            const SizedBox(height: 8),
-
-            /// TITLE
-            Text(
-              item["title"],
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            const SizedBox(height: 4),
-
-            /// SUBTITLE
-            Text(
-              item["subtitle"],
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-              ),
-            ),
-
-            const Spacer(),
-
-            /// PRICE + ARROW
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  item["price"],
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF23A373),
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const Icon(Icons.arrow_forward_ios,
-                    size: 16, color: Colors.grey),
-              ],
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// IMAGE
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: Image.asset(
+                  item["image"],
+                  height: 120,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              ),
+
+              const SizedBox(height: 6),
+
+              /// BADGE
+              if (item["badge"] != null)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF23A373).withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(
+                    item["badge"],
+                    style: const TextStyle(
+                      color: Color(0xFF23A373),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+
+              const SizedBox(height: 8),
+
+              /// TITLE
+              Text(
+                item["title"],
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+
+              const SizedBox(height: 4),
+
+              /// SUBTITLE
+              Text(
+                item["subtitle"],
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.grey,
+                ),
+              ),
+
+              const Spacer(),
+
+              /// PRICE + ARROW
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    item["price"],
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF23A373),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const Icon(Icons.arrow_forward_ios,
+                      size: 16, color: Colors.grey),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-
 // ---------------- LIST ----------------
 
 final List<Map<String, dynamic>> applianceServices = [
