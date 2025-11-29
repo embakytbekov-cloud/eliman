@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:eliman/home/services/moving_services.dart';
 
-class ApplianceDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> item;
+class MovingDetailsScreen extends StatelessWidget {
+  final MovingService item;
 
-  const ApplianceDetailsScreen({super.key, required this.item});
+  const MovingDetailsScreen({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +14,11 @@ class ApplianceDetailsScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          item['title'],
+          item.title,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 22,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -26,79 +27,54 @@ class ApplianceDetailsScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// IMAGE
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(
-                item['image'],
+                item.image,
                 height: 230,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
-
             const SizedBox(height: 16),
-
-            /// TITLE
             Text(
-              item['title'],
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            const SizedBox(height: 6),
-
-            /// SUBTITLE
-            Text(
-              item['subtitle'],
+              item.subtitle,
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
             ),
-
-            const SizedBox(height: 16),
-
-            /// PRICE
+            const SizedBox(height: 20),
             Text(
-              "Price: ${item['price']}",
+              "\$${item.minPrice} - \$${item.maxPrice}",
               style: const TextStyle(
-                fontSize: 18,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF23A373),
+                color: Colors.green,
               ),
             ),
-
-            const SizedBox(height: 26),
-
-            /// INFO SECTION
-            const Text(
-              "Service Includes:",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-            _infoBullet("Diagnosis & inspection"),
-            _infoBullet("Fixing minor & major issues"),
-            _infoBullet("Replacement of broken parts"),
-            _infoBullet("Full testing after repair"),
-            _infoBullet("90-day workmanship guarantee"),
-
             const SizedBox(height: 30),
-
-            /// BUTTON
+            const Text(
+              "What's Included",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 15),
+            buildFeature("Professional movers"),
+            buildFeature("Safe item handling"),
+            buildFeature("Fast service"),
+            buildFeature("Furniture protection"),
+            buildFeature("Flexible timing"),
+            const SizedBox(height: 35),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF23A373),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Colors.green,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -119,22 +95,16 @@ class ApplianceDetailsScreen extends StatelessWidget {
     );
   }
 
-  /// bullet point
-  Widget _infoBullet(String text) {
+  Widget buildFeature(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: Color(0xFF23A373), size: 18),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
-              ),
-            ),
+          const Icon(Icons.check_circle, color: Colors.green, size: 20),
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: const TextStyle(fontSize: 16),
           ),
         ],
       ),

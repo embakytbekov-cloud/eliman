@@ -5,13 +5,13 @@ import 'widgets/service_item.dart';
 import 'widgets/why_choose_us.dart';
 
 // экраны
-import 'screens/cleaning_screen.dart';
-import 'screens/handyman_screen.dart';
-import 'screens/moving_screen.dart';
-import 'screens/furniture_screen.dart';
-import 'screens/locksmith_screen.dart';
-import 'screens/appliance_screen.dart';
-import 'screens/tire_screen.dart';
+import 'screens/cleaning/cleaning_screen.dart';
+import 'screens/handyman/handyman_screen.dart';
+import 'screens/moving/moving_screen.dart';
+import 'screens/furniture/furniture_screen.dart';
+import 'screens/locksmith/locksmith_screen.dart';
+import 'screens/appliance/appliance_screen.dart';
+import 'screens/tire/tire_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

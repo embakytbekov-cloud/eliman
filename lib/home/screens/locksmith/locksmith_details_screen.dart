@@ -1,30 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:eliman/home/services/locksmith_service.dart';
 
-class MovingDetailsScreen extends StatelessWidget {
-  final Map<String, dynamic> item;
+class LocksmithDetailsScreen extends StatelessWidget {
+  final LocksmithService item;
 
-  const MovingDetailsScreen({super.key, required this.item});
+  const LocksmithDetailsScreen({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-
-      /// APPBAR
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         title: Text(
-          item['title'],
+          item.title,
           style: const TextStyle(
             color: Colors.black,
             fontSize: 22,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
-
-      /// BODY
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -34,8 +31,8 @@ class MovingDetailsScreen extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(16),
               child: Image.asset(
-                item['image'],
-                height: 220,
+                item.image,
+                height: 240,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -43,20 +40,40 @@ class MovingDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
+            /// BADGE
+            if (item.badge != null)
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  item.badge!,
+                  style: const TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+            const SizedBox(height: 16),
+
             /// TITLE
             Text(
-              item['title'],
+              item.title,
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
 
             /// SUBTITLE
             Text(
-              item['subtitle'],
+              item.subtitle,
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
@@ -65,59 +82,43 @@ class MovingDetailsScreen extends StatelessWidget {
 
             const SizedBox(height: 20),
 
-            /// PRICE BOX
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEFF7F3),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.attach_money, color: Colors.green, size: 26),
-                  const SizedBox(width: 8),
-                  Text(
-                    item['price'],
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green,
-                    ),
-                  ),
-                ],
+            /// PRICE
+            Text(
+              "\$${item.minPrice} - \$${item.maxPrice}",
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
               ),
             ),
 
             const SizedBox(height: 30),
 
-            /// WHAT'S INCLUDED
             const Text(
               "What's Included",
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
             ),
 
             const SizedBox(height: 12),
 
-            _included("Professional movers"),
-            _included("Packing & Unpacking (optional)"),
-            _included("Furniture disassembly / reassembly"),
-            _included("Loading & Unloading"),
-            _included("Truck + Equipment"),
-            _included("Protective blankets & wrapping"),
+            _buildFeature("Professional locksmith"),
+            _buildFeature("Fast arrival"),
+            _buildFeature("Warranty included"),
+            _buildFeature("Secure & safe job"),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 35),
 
-            /// BUTTON
+            /// BOOK BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -131,32 +132,27 @@ class MovingDetailsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            ),
-
-            const SizedBox(height: 20),
+            )
           ],
         ),
       ),
     );
   }
 
-  /// Reusable row item
-  Widget _included(String text) {
+  Widget _buildFeature(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 20),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
-              ),
+          const Icon(Icons.check_circle, color: Colors.green, size: 22),
+          const SizedBox(width: 10),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
             ),
-          ),
+          )
         ],
       ),
     );
