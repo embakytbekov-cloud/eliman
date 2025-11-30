@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:eliman/home/services/moving_services.dart';
 import 'package:eliman/home/screens/moving/widgets/moving_card.dart';
+import 'package:eliman/home/services/moving_services.dart';
 
 class MovingScreen extends StatelessWidget {
   const MovingScreen({super.key});

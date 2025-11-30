@@ -8,7 +8,7 @@ import 'widgets/why_choose_us.dart';
 import 'screens/cleaning/cleaning_screen.dart';
 import 'screens/handyman/handyman_screen.dart';
 import 'screens/moving/moving_screen.dart';
-import 'screens/furniture/furniture_screen.dart';
+import 'package:eliman/home/screens/smart_home/smart_home_screen.dart';
 import 'screens/locksmith/locksmith_screen.dart';
 import 'screens/appliance/appliance_screen.dart';
 import 'screens/tire/tire_screen.dart';
@@ -206,17 +206,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
 
-                      // FURNITURE
+                      // SMART HOME
                       CategoryItem(
-                        icon: Icons.chair,
-                        label: "Furniture",
-                        highlighted: selectedCategory == 4,
+                        icon: Icons
+                            .sensors, // можно заменить на кастомный SVG если хочешь
+                        label: "Smart Home",
+                        highlighted: selectedCategory == 5,
                         onTap: () {
-                          setState(() => selectedCategory = 4);
+                          setState(() => selectedCategory = 5);
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const FurnitureScreen(),
+                              builder: (_) => const SmartHomeScreen(),
                             ),
                           );
                         },
