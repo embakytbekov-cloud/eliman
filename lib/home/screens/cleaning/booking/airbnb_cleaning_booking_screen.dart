@@ -12,387 +12,361 @@ class AirbnbCleaningBookingScreen extends StatefulWidget {
 
 class _AirbnbCleaningBookingScreenState
     extends State<AirbnbCleaningBookingScreen> {
-// ------------ TIME SLOTS ------------
+  // COLORS
+  final Color accent = const Color(0xFF2B6E4F); // Dark green
+  final Color confirmGreen = const Color(0xFF25D366); // WhatsApp green
+  final Color softGreen = const Color(0xFFDFF3E8);
+
+  // CONTROLLERS
+  final TextEditingController addressCtrl = TextEditingController();
+  final TextEditingController notesCtrl = TextEditingController();
+
+  // ROOMS
+  int bedrooms = 1;
+  int bathrooms = 1;
+  int guests = 1;
+
+  // DATE
+  String? selectedDate;
+  late List<String> nextThreeDays;
+
+  // TIME
+  String? selectedTime;
   final List<String> timeSlots = [
     "9 AM – 12 PM",
-    "12 PM – 6 PM",
-    "9 AM – 6 PM",
+    "12 PM – 3 PM",
+    "3 PM – 6 PM",
     "6 PM – 9 PM",
   ];
 
-  String selectedTime = "9 AM – 12 PM";
+  // CLEAN TYPES (Airbnb specific)
+  String? cleanType;
+  final List<String> cleanTypes = [
+    "Checkout Clean",
+    "Back-to-Back",
+    "Mid-Stay Clean",
+  ];
 
-// ------------ DATE ------------
-  List<String> generateAvailableDates() {
-    DateTime now = DateTime.now();
-    return List.generate(
-      3,
-      (i) => "${now.year}/${now.month}/${now.day + i}",
-    );
-  }
+  // LINEN & LAUNDRY
+  List<String> linenTasks = [];
+  final List<String> linenOptions = [
+    "Change bedding",
+    "Wash towels",
+    "Laundry load",
+    "Refill linens",
+  ];
 
-  String selectedDate = "";
+  // RESTOCKING
+  List<String> restockTasks = [];
+  final List<String> restockOptions = [
+    "Refill toiletries",
+    "Restock trash bags",
+    "Paper towels",
+    "Coffee / tea refill",
+  ];
 
-// ------------ EXTRA SERVICES ------------
-  bool linenService = false;
-  bool laundry = false;
-  bool restockSupplies = false;
-  bool trashRemoval = false;
-
-// ------------ BEDROOMS / BATHROOMS ------------
-  int bedrooms = 1;
-  int bathrooms = 1;
-  bool hasPets = false;
+  // EXTRA TASKS
+  List<String> extras = [];
+  final List<String> extraOptions = [
+    "Fridge Cleaning",
+    "Oven Cleaning",
+    "Balcony Sweep",
+    "Windows Interior",
+    "Deep Disinfection",
+  ];
 
   @override
   void initState() {
     super.initState();
-    selectedDate = generateAvailableDates()[0];
-  }
 
-// ------------ PRICE CALCULATION (*.double fix) ------------
-  int minPriceCalc() {
-    int min = (widget.item["minPrice"] as double).toInt();
-    int extra = 0;
+    final now = DateTime.now();
 
-// Bedrooms + Bathrooms
-    extra += (bedrooms - 1) * 10;
-    extra += (bathrooms - 1) * 10;
-
-// Extras
-    if (linenService) extra += 10;
-    if (laundry) extra += 15;
-    if (restockSupplies) extra += 10;
-    if (trashRemoval) extra += 10;
-
-// Pets
-    if (hasPets) extra += 20;
-
-    return min + extra;
-  }
-
-  int maxPriceCalc() {
-    int max = (widget.item["maxPrice"] as double).toInt();
-    int extra = 0;
-
-// Bedrooms + Bathrooms
-    extra += (bedrooms - 1) * 15;
-    extra += (bathrooms - 1) * 15;
-
-// Extras
-    if (linenService) extra += 20;
-    if (laundry) extra += 25;
-    if (restockSupplies) extra += 15;
-    if (trashRemoval) extra += 10;
-
-// Pets
-    if (hasPets) extra += 40;
-
-    return max + extra;
+    nextThreeDays = [
+      "${now.month}/${now.day}/${now.year}",
+      "${now.add(const Duration(days: 1)).month}/${now.add(const Duration(days: 1)).day}/${now.add(const Duration(days: 1)).year}",
+      "${now.add(const Duration(days: 2)).month}/${now.add(const Duration(days: 2)).day}/${now.add(const Duration(days: 2)).year}",
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final dates = generateAvailableDates();
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          widget.item["title"],
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
+          "Airbnb Cleaning",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
             color: Colors.black,
           ),
         ),
-        backgroundColor: Colors.white,
-        elevation: 0,
       ),
-
-// ---------------- BODY ----------------
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-// IMAGE
-            ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                widget.item["image"],
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-// TITLE
-            const Text(
-              "What’s Included",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-            ),
-
-            const SizedBox(height: 12),
-
-            _included("Full Airbnb-ready cleaning"),
-            _included("Bedroom & living area refresh"),
-            _included("Bathroom disinfection"),
-            _included("Kitchen wipe-down"),
-            _included("Dusting, floors, trash removal"),
-
-            const SizedBox(height: 20),
-            const Divider(),
-
-// 🔥 BEDROOMS / BATHROOMS / PETS
-            const SizedBox(height: 20),
-            const Text(
-              "Home Details",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-            ),
-
-            const SizedBox(height: 12),
-
-            _counter("Bedrooms", bedrooms, (v) {
-              setState(() => bedrooms = v);
+            _title("Address"),
+            _addressField(),
+            const SizedBox(height: 22),
+            _title("Select Date"),
+            _dateSelector(),
+            const SizedBox(height: 22),
+            _title("Select Time"),
+            _timeSelector(),
+            const SizedBox(height: 22),
+            _title("Bedrooms"),
+            _stepper(
+                value: bedrooms,
+                onChanged: (v) => setState(() => bedrooms = v)),
+            const SizedBox(height: 22),
+            _title("Bathrooms"),
+            _stepper(
+                value: bathrooms,
+                onChanged: (v) => setState(() => bathrooms = v)),
+            const SizedBox(height: 22),
+            _title("Guests"),
+            _stepper(
+                value: guests, onChanged: (v) => setState(() => guests = v)),
+            const SizedBox(height: 22),
+            _title("Cleaning Type"),
+            _chipSelectorSingle(cleanTypes, cleanType, (v) {
+              setState(() => cleanType = v);
             }),
+            const SizedBox(height: 22),
+            _title("Linen & Laundry"),
+            _chipSelectorMulti(linenOptions, linenTasks),
+            const SizedBox(height: 22),
+            _title("Restocking"),
+            _chipSelectorMulti(restockOptions, restockTasks),
+            const SizedBox(height: 22),
+            _title("Extra Tasks"),
+            _chipSelectorMulti(extraOptions, extras),
+            const SizedBox(height: 30),
+            _trustBlock(),
+            const SizedBox(height: 35),
+            _confirmButton(),
+            const SizedBox(height: 40),
+          ],
+        ),
+      ),
+    );
+  }
 
-            const SizedBox(height: 10),
+  // ===============================
+  //  UI COMPONENTS
+  // ===============================
 
-            _counter("Bathrooms", bathrooms, (v) {
-              setState(() => bathrooms = v);
-            }),
+  Widget _title(String t) => Text(
+        t,
+        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+      );
 
-            const SizedBox(height: 10),
+  Widget _addressField() {
+    return _card(
+      child: TextField(
+        controller: addressCtrl,
+        decoration: const InputDecoration(
+          hintText: "Enter property address",
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(12),
+        ),
+      ),
+    );
+  }
 
+  Widget _dateSelector() {
+    return _card(
+      child: Wrap(
+        spacing: 10,
+        children: nextThreeDays.map((d) {
+          final selected = selectedDate == d;
+          return ChoiceChip(
+            selected: selected,
+            selectedColor: accent,
+            backgroundColor: Colors.grey.shade200,
+            label: Text(
+              d,
+              style: TextStyle(color: selected ? Colors.white : Colors.black),
+            ),
+            onSelected: (_) => setState(() => selectedDate = d),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _timeSelector() {
+    return _card(
+      child: Wrap(
+        spacing: 10,
+        children: timeSlots.map((slot) {
+          final selected = selectedTime == slot;
+          return ChoiceChip(
+            selected: selected,
+            selectedColor: accent,
+            backgroundColor: Colors.grey.shade200,
+            label: Text(
+              slot,
+              style: TextStyle(color: selected ? Colors.white : Colors.black),
+            ),
+            onSelected: (_) => setState(() => selectedTime = slot),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _stepper({required int value, required ValueChanged<int> onChanged}) {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("$value",
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  "Any Pets?",
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Switch(
-                  value: hasPets,
-                  activeColor: Colors.green,
-                  onChanged: (v) => setState(() => hasPets = v),
-                ),
+                _circleBtn(Icons.remove, () {
+                  if (value > 1) onChanged(value - 1);
+                }),
+                const SizedBox(width: 10),
+                _circleBtn(Icons.add, () {
+                  onChanged(value + 1);
+                }),
               ],
             ),
-
-            const SizedBox(height: 20),
-            const Divider(),
-
-// EXTRA SERVICES
-            const SizedBox(height: 20),
-            const Text(
-              "Extra Services",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            const SizedBox(height: 10),
-
-            _extra("Linen Change", linenService, (v) {
-              setState(() => linenService = v);
-            }),
-
-            _extra("Laundry Service", laundry, (v) {
-              setState(() => laundry = v);
-            }),
-
-            _extra("Restock Supplies", restockSupplies, (v) {
-              setState(() => restockSupplies = v);
-            }),
-
-            _extra("Trash Removal", trashRemoval, (v) {
-              setState(() => trashRemoval = v);
-            }),
-
-            const SizedBox(height: 20),
-            const Divider(),
-
-// DATE
-            const SizedBox(height: 20),
-            const Text(
-              "Select Day",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-            ),
-
-            DropdownButton<String>(
-              value: selectedDate,
-              items: dates
-                  .map((d) => DropdownMenuItem(
-                        value: d,
-                        child: Text(d),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() => selectedDate = value!);
-              },
-            ),
-
-            const SizedBox(height: 20),
-
-// TIME
-            const Text(
-              "Select Time",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-            ),
-
-            DropdownButton<String>(
-              value: selectedTime,
-              items: timeSlots
-                  .map((t) => DropdownMenuItem(
-                        value: t,
-                        child: Text(t),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                setState(() => selectedTime = value!);
-              },
-            ),
-
-            const SizedBox(height: 30),
-            const Divider(),
-
-// PRICE
-            const SizedBox(height: 20),
-
-            Text(
-              "\$${minPriceCalc()} - \$${maxPriceCalc()}",
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: Colors.yellow.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Text(
-                "You only pay the cleaner after the job is completed.\n"
-                "Booking fee 9.99 ensures guaranteed arrival.",
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-
-            const SizedBox(height: 20),
           ],
         ),
       ),
+    );
+  }
 
-// BUTTON
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
-            child: const Text(
-              "Confirm Booking for 9.99",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+  Widget _circleBtn(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: accent,
+        ),
+        child: Icon(icon, size: 18, color: Colors.white),
+      ),
+    );
+  }
+
+  Widget _chipSelectorSingle(
+      List<String> options, String? active, Function(String) onSelect) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: options.map((opt) {
+        final selected = active == opt;
+        return ChoiceChip(
+          selected: selected,
+          selectedColor: Colors.black,
+          backgroundColor: Colors.grey.shade300,
+          label: Text(
+            opt,
+            style: TextStyle(color: selected ? Colors.white : Colors.black),
+          ),
+          onSelected: (_) => onSelect(opt),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _chipSelectorMulti(List<String> options, List<String> target) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: options.map((opt) {
+        final bool selected = target.contains(opt);
+        return FilterChip(
+          selected: selected,
+          selectedColor: Colors.black,
+          backgroundColor: Colors.grey.shade300,
+          label: Text(
+            opt,
+            style: TextStyle(
+              color: selected ? Colors.white : Colors.black,
             ),
           ),
+          onSelected: (v) {
+            setState(() {
+              if (v) {
+                target.add(opt);
+              } else {
+                target.remove(opt);
+              }
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _trustBlock() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: softGreen,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const Text(
+        "You pay the cleaner only after the job is fully completed.\n\n"
+        "A small \$9.99 booking fee guarantees your appointment, locks the time slot, "
+        "and ensures a trusted professional is dispatched to your property.\n\n"
+        "Your Airbnb is in safe hands — we deliver quality, every single time.",
+        style: TextStyle(fontSize: 15, height: 1.4),
+      ),
+    );
+  }
+
+  Widget _confirmButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: confirmGreen,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+        ),
+        onPressed: () {},
+        child: const Text(
+          "Confirm Booking — \$9.99",
+          style: TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
         ),
       ),
     );
   }
 
-// ---------------- HELPERS ----------------
-
-  Widget _included(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        children: [
-          const Icon(Icons.check_circle, color: Colors.green, size: 22),
-          const SizedBox(width: 10),
-          Text(
-            text,
-            style: const TextStyle(fontSize: 16),
+  Widget _card({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.06),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _extra(String text, bool value, Function(bool) onChanged) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            text,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          Checkbox(
-            value: value,
-            onChanged: (v) => onChanged(v!),
-            activeColor: Colors.green,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _counter(String label, int value, Function(int) onChanged) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        Row(
-          children: [
-            IconButton(
-              onPressed: () {
-                if (value > 1) onChanged(value - 1);
-              },
-              icon: const Icon(Icons.remove_circle_outline),
-            ),
-            Text(
-              "$value",
-              style: const TextStyle(fontSize: 17),
-            ),
-            IconButton(
-              onPressed: () {
-                onChanged(value + 1);
-              },
-              icon: const Icon(Icons.add_circle_outline),
-            ),
-          ],
-        ),
-      ],
+      child: child,
     );
   }
 }

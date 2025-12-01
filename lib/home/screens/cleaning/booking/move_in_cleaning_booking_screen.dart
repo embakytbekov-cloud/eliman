@@ -12,437 +12,354 @@ class MoveInCleaningBookingScreen extends StatefulWidget {
 
 class _MoveInCleaningBookingScreenState
     extends State<MoveInCleaningBookingScreen> {
-// CONTROLLERS
+  // COLORS
+  final Color buttonGreen = const Color(0xFF25D366);
+  final Color darkGreen = const Color(0xFF2B6E4F);
+  final Color softGreen = const Color(0xFFDFF3E8);
+
+  // CONTROLLERS
   final TextEditingController addressCtrl = TextEditingController();
-  final TextEditingController notesCtrl = TextEditingController();
 
-// VALUES
-  int bedrooms = 1;
-  int bathrooms = 1;
-  bool pets = false;
+  // DATE
+  String? selectedDate;
+  late List<String> nextThreeDays;
 
-  List<String> extraTasks = [];
-
-  final List<String> extras = [
-    "Windows cleaning",
-    "Fridge cleaning",
-    "Oven cleaning",
-    "Laundry",
-    "Interior cabinet cleaning",
-    "Basement cleaning",
-  ];
-
-// DAY / TIME
-  DateTime? selectedDay;
+  // TIME
   String? selectedTime;
 
   final List<String> timeSlots = [
-    "9:00 AM – 12:00 PM",
-    "12:00 PM – 3:00 PM",
-    "9:00 AM – 3:00 PM",
-    "6:00 PM – 9:00 PM",
+    "9 AM – 12 PM",
+    "12 PM – 3 PM",
+    "3 PM – 6 PM",
+    "6 PM – 9 PM",
+  ];
+
+  // ROOMS
+  int bedrooms = 1;
+  int bathrooms = 1;
+
+  // EXTRA TASKS (Chips)
+  List<String> selectedExtras = [];
+
+  final List<String> extraOptions = [
+    "Inside Oven",
+    "Inside Fridge",
+    "Cabinet Wipe",
+    "Closet Cleaning",
+    "Window Interior",
+    "Wall Wipe",
+    "Baseboard Scrub",
+    "Patio/Balcony clean",
   ];
 
   @override
   void initState() {
     super.initState();
-    selectedDay = DateTime.now(); // today by default
-  }
-
-// ---- PICK DAY (ONLY 3 DAYS) ----
-  Future<void> pickDay() async {
     final now = DateTime.now();
-    final days = <DateTime>[
-      DateTime(now.year, now.month, now.day),
-      DateTime(now.year, now.month, now.day + 1),
-      DateTime(now.year, now.month, now.day + 2),
+
+    nextThreeDays = [
+      "${now.month}/${now.day}/${now.year}",
+      "${now.add(const Duration(days: 1)).month}/${now.add(const Duration(days: 1)).day}/${now.add(const Duration(days: 1)).year}",
+      "${now.add(const Duration(days: 2)).month}/${now.add(const Duration(days: 2)).day}/${now.add(const Duration(days: 2)).year}",
     ];
-
-    await showModalBottomSheet(
-      context: context,
-      builder: (_) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Select Day",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              ...days.map((d) {
-                return ListTile(
-                  title: Text(
-                    "${d.month}/${d.day}/${d.year}",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  onTap: () {
-                    setState(() => selectedDay = d);
-                    Navigator.pop(context);
-                  },
-                );
-              }),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-// ---- PRICE CALCULATION ----
-  double calculateTotal() {
-    double base = 160; // base move-in cleaning
-
-    base += bedrooms * 10; // per bedroom
-    base += bathrooms * 5; // per bathroom
-    if (pets) base += 10; // pets
-    base += extraTasks.length * 10; // each extra
-
-    return base;
   }
 
   @override
   Widget build(BuildContext context) {
-    final double total = calculateTotal();
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        title: const Text(
-          "Move-In Cleaning",
-          style: TextStyle(
-            color: Colors.black,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: Text(
+          widget.item["title"],
+          style: const TextStyle(
             fontSize: 22,
-            fontWeight: FontWeight.w600,
+            color: Colors.black,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-// ADDRESS
-            _title("Service Address"),
-            _whiteCard(
-              child: TextField(
-                controller: addressCtrl,
-                maxLines: 2,
-                decoration: const InputDecoration(
-                  hintText: "Enter your address",
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-// BEDROOMS
-            _title("How many bedrooms?"),
-            _bigNumberSelector(
-              value: bedrooms,
-              onChanged: (v) => setState(() => bedrooms = v),
-            ),
-
-            const SizedBox(height: 22),
-
-// BATHROOMS
-            _title("How many bathrooms?"),
-            _bigNumberSelector(
-              value: bathrooms,
-              onChanged: (v) => setState(() => bathrooms = v),
-            ),
-
-            const SizedBox(height: 22),
-
-// PETS
-            _title("Any pets in your home?"),
-            Row(
-              children: [
-                _bigChoice("Yes", pets == true, () {
-                  setState(() => pets = true);
-                }),
-                const SizedBox(width: 14),
-                _bigChoice("No", pets == false, () {
-                  setState(() => pets = false);
-                }),
-              ],
-            ),
-
-            const SizedBox(height: 22),
-
-// EXTRA TASKS
-            _title("Extra Tasks"),
-            Column(
-              children: extras.map((task) {
-                return CheckboxListTile(
-                  activeColor: const Color(0xFF23A373),
-                  value: extraTasks.contains(task),
-                  title: Text(task, style: const TextStyle(fontSize: 16)),
-                  onChanged: (checked) {
-                    setState(() {
-                      if (checked == true) {
-                        extraTasks.add(task);
-                      } else {
-                        extraTasks.remove(task);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 22),
-
-// DAY
-            _title("Select Day"),
-            _whiteCard(
-              child: ListTile(
-                title: Text(
-                  "${selectedDay!.month}/${selectedDay!.day}/${selectedDay!.year}",
-                  style: const TextStyle(fontSize: 16),
-                ),
-                trailing:
-                    const Icon(Icons.calendar_today, color: Color(0xFF23A373)),
-                onTap: pickDay,
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-// TIME
+            _title("Address"),
+            _addressField(),
+            const SizedBox(height: 25),
+            _title("Select Date"),
+            _dateButtons(),
+            const SizedBox(height: 25),
             _title("Select Time"),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: timeSlots.map((slot) {
-                final bool isSelected = selectedTime == slot;
-                return GestureDetector(
-                  onTap: () => setState(() => selectedTime = slot),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? const Color(0xFF23A373)
-                          : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      slot,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isSelected ? Colors.white : Colors.black87,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 22),
-
-// NOTES
-            _title("Extra Notes"),
-            _whiteCard(
-              child: TextField(
-                controller: notesCtrl,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  hintText: "Any additional details...",
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 26),
-
-// PRICE SUMMARY
-            _title("Price Summary"),
-            const SizedBox(height: 10),
-
-            _priceItem("Move-In Cleaning", "\$160"),
-            _priceItem("Bedrooms x$bedrooms", "+\$${bedrooms * 10}"),
-            _priceItem("Bathrooms x$bathrooms", "+\$${bathrooms * 5}"),
-            if (pets) _priceItem("Pets", "+\$10"),
-            if (extraTasks.isNotEmpty)
-              _priceItem(
-                "Extras (${extraTasks.length})",
-                "+\$${extraTasks.length * 10}",
-              ),
-
-            const Divider(height: 30),
-
-            _priceItem(
-              "Total Price (estimated)",
-              "\$${total.toStringAsFixed(2)}",
-              highlight: true,
-            ),
-
-            const SizedBox(height: 20),
-
-            const Text(
-              "You will pay the cleaner directly after the job is completed.\n"
-              "The \$9.99 booking fee guarantees a fast & confirmed cleaner.",
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.black54,
-                height: 1.4,
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-// BOOK BUTTON
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-// TODO: later send to Telegram / Supabase
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Move-in cleaning booking sent!"),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF23A373),
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text(
-                  "Confirm Booking for \$9.99",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-
+            _timeSelector(),
+            const SizedBox(height: 25),
+            _title("Bedrooms"),
+            _roomSelector(true),
+            const SizedBox(height: 25),
+            _title("Bathrooms"),
+            _roomSelector(false),
+            const SizedBox(height: 25),
+            _title("Extra Tasks"),
+            _extraTasksChips(),
+            const SizedBox(height: 30),
+            _trustBlock(),
             const SizedBox(height: 40),
+            _confirmButton(),
           ],
         ),
       ),
     );
   }
 
-// ---------- HELPERS ----------
+  // ---------------------------------
+  // COMPONENTS
+  // ---------------------------------
 
   Widget _title(String text) {
     return Text(
       text,
-      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+      style: const TextStyle(
+        fontSize: 19,
+        fontWeight: FontWeight.w700,
+      ),
     );
   }
 
-  Widget _whiteCard({required Widget child}) {
+  Widget _addressField() {
+    return _card(
+      child: TextField(
+        controller: addressCtrl,
+        decoration: const InputDecoration(
+          hintText: "Enter service address",
+          contentPadding: EdgeInsets.all(14),
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+
+  Widget _card({required Widget child}) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.07),
+          )
         ],
       ),
       child: child,
     );
   }
 
-  Widget _bigChoice(String text, bool selected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFF23A373) : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 16,
-            color: selected ? Colors.white : Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
+  // DATE BUTTONS
+  Widget _dateButtons() {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 10,
+          children: nextThreeDays.map((d) {
+            final selected = selectedDate == d;
+            return ChoiceChip(
+              selected: selected,
+              selectedColor: darkGreen,
+              backgroundColor: Colors.grey.shade200,
+              label: Text(
+                d,
+                style: TextStyle(color: selected ? Colors.white : Colors.black),
+              ),
+              onSelected: (_) => setState(() => selectedDate = d),
+            );
+          }).toList(),
         ),
       ),
     );
   }
 
-  Widget _bigNumberSelector({
-    required int value,
-    required ValueChanged<int> onChanged,
-  }) {
-    return Row(
-      children: List.generate(6, (i) {
-        final int number = i + 1;
-        final bool isSelected = value == number;
-        return Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: GestureDetector(
-            onTap: () => onChanged(number),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18,
-                vertical: 12,
+  // TIME
+  Widget _timeSelector() {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 10,
+          children: timeSlots.map((slot) {
+            final selected = selectedTime == slot;
+            return ChoiceChip(
+              selected: selected,
+              selectedColor: darkGreen,
+              backgroundColor: Colors.grey.shade200,
+              label: Text(
+                slot,
+                style: TextStyle(color: selected ? Colors.white : Colors.black),
               ),
-              decoration: BoxDecoration(
-                color:
-                    isSelected ? const Color(0xFF23A373) : Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                "$number",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isSelected ? Colors.white : Colors.black87,
-                ),
-              ),
-            ),
-          ),
-        );
-      }),
+              onSelected: (_) => setState(() => selectedTime = slot),
+            );
+          }).toList(),
+        ),
+      ),
     );
   }
 
-  Widget _priceItem(String title, String price, {bool highlight = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: highlight ? 17 : 15,
-              fontWeight: highlight ? FontWeight.bold : FontWeight.w500,
+  // ROOMS
+  Widget _roomSelector(bool bedroom) {
+    int value = bedroom ? bedrooms : bathrooms;
+
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(bedroom ? "Bedrooms" : "Bathrooms",
+                style: const TextStyle(fontSize: 16)),
+            Row(
+              children: [
+                _circleBtn(Icons.remove, () {
+                  if (value > 1) {
+                    setState(() {
+                      if (bedroom)
+                        bedrooms--;
+                      else
+                        bathrooms--;
+                    });
+                  }
+                }),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Text(
+                    "$value",
+                    style: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                _circleBtn(Icons.add, () {
+                  setState(() {
+                    if (bedroom)
+                      bedrooms++;
+                    else
+                      bathrooms++;
+                  });
+                }),
+              ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _circleBtn(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: darkGreen,
+          shape: BoxShape.circle,
+        ),
+        padding: const EdgeInsets.all(6),
+        child: Icon(icon, size: 18, color: Colors.white),
+      ),
+    );
+  }
+
+  // EXTRA TASKS — AIRBNB STYLE CHIPS
+  Widget _extraTasksChips() {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: extraOptions.map((task) {
+            final selected = selectedExtras.contains(task);
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (selected) {
+                    selectedExtras.remove(task);
+                  } else {
+                    selectedExtras.add(task);
+                  }
+                });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: selected ? darkGreen : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Text(
+                  task,
+                  style: TextStyle(
+                    color: selected ? Colors.white : Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // TRUST BLOCK
+  // TRUST BLOCK — BRIGHT GREEN
+  Widget _trustBlock() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: softGreen,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const Text(
+        "Estimated Price: \$150 – \$430\n\n"
+        "You’ll never be charged until the job is completed.\n"
+        "Our \$9.99 booking fee simply reserves your time slot and begins the search "
+        "for the best available professional in your area.\n"
+        "We’ll notify you as soon as someone accepts your request.",
+        style: TextStyle(
+          fontSize: 15,
+          height: 1.4,
+          color: Colors.green,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  // CONFIRM BUTTON
+  Widget _confirmButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: buttonGreen,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
           ),
-          Text(
-            price,
-            style: TextStyle(
-              fontSize: highlight ? 17 : 15,
-              fontWeight: highlight ? FontWeight.bold : FontWeight.w600,
-              color: highlight ? const Color(0xFF23A373) : Colors.black,
-            ),
+        ),
+        onPressed: () {},
+        child: const Text(
+          "Confirm Booking — \$9.99",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
           ),
-        ],
+        ),
       ),
     );
   }

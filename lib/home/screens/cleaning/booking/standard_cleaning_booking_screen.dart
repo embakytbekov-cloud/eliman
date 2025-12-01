@@ -293,7 +293,7 @@ class _StandardCleaningBookingScreenState
     );
   }
 
-// TRUST BLOCK — BRIGHT GREEN
+  // TRUST BLOCK — BRIGHT GREEN
   Widget _trustBlock() {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -302,10 +302,11 @@ class _StandardCleaningBookingScreenState
         borderRadius: BorderRadius.circular(14),
       ),
       child: const Text(
-        "You pay the cleaner only after the job is fully completed.\n\n"
-        "A small \$9.99 booking fee guarantees your appointment, locks the time slot, "
-        "and ensures a trusted professional is dispatched to your address.\n\n"
-        "Your home is in safe hands - we deliver quality, every single time.",
+        "Estimated Price: \$75 – \$180\n\n"
+        "You’ll never be charged until the job is completed.\n"
+        "Our \$9.99 booking fee simply reserves your time slot and begins the search "
+        "for the best available professional in your area.\n"
+        "We’ll notify you as soon as someone accepts your request.",
         style: TextStyle(
           fontSize: 15,
           height: 1.4,

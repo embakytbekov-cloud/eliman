@@ -11,39 +11,43 @@ class DeepCleaningBookingScreen extends StatefulWidget {
 }
 
 class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
-  final Color accent = const Color(0xFF1C6E54);
+// COLORS
+  final Color buttonGreen = const Color(0xFF25D366); // WhatsApp button
+  final Color darkGreen = const Color(0xFF2B6E4F); // selected chips
+  final Color softGreen = const Color(0xFFDFF3E8); // trust block bg
 
-// ADDRESS
+// CONTROLLERS
   final TextEditingController addressCtrl = TextEditingController();
 
-// BEDROOM / BATHROOM
-  int bedrooms = 1;
-  int bathrooms = 1;
-
-// EXTRA TASKS
-  List<String> selectedExtras = [];
-
-  final List<Map<String, dynamic>> extraOptions = [
-    {"title": "Fridge Deep Clean"},
-    {"title": "Oven Deep Clean"},
-    {"title": "Window Interior"},
-    {"title": "Cabinet Interior"},
-    {"title": "Baseboard Scrub"},
-    {"title": "Wall Spot Cleaning"},
-  ];
-
-// DATE — only 3 days
+// DATE
   String? selectedDate;
   late List<String> nextThreeDays;
 
-// TIME SLOTS
+// TIME
   String? selectedTime;
 
   final List<String> timeSlots = [
     "9 AM – 12 PM",
     "12 PM – 3 PM",
     "3 PM – 6 PM",
-    "6 PM – 9 PM"
+    "6 PM – 9 PM",
+  ];
+
+// BED/BATH
+  int bedrooms = 1;
+  int bathrooms = 1;
+
+// AIRBNB STYLE EXTRA TASKS
+  List<String> selectedExtras = [];
+
+  final List<String> extraOptions = [
+    "Inside Oven",
+    "Inside Fridge",
+    "Inside Cabinets",
+    "Window Interior",
+    "Wall Wipe",
+    "Baseboard Deep Clean",
+    "Balcony Scrub",
   ];
 
   @override
@@ -51,7 +55,6 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
     super.initState();
 
     final now = DateTime.now();
-
     nextThreeDays = [
       "${now.month}/${now.day}/${now.year}",
       "${now.add(const Duration(days: 1)).month}/${now.add(const Duration(days: 1)).day}/${now.add(const Duration(days: 1)).year}",
@@ -83,26 +86,24 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
           children: [
             _title("Address"),
             _addressField(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             _title("Select Date"),
             _dateButtons(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             _title("Select Time"),
             _timeSelector(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 25),
             _title("Bedrooms"),
-            _roomSelector(isBedroom: true),
-            const SizedBox(height: 20),
+            _roomSelector(true),
+            const SizedBox(height: 25),
             _title("Bathrooms"),
-            _roomSelector(isBedroom: false),
-            const SizedBox(height: 20),
+            _roomSelector(false),
+            const SizedBox(height: 25),
             _title("Extra Tasks"),
-            _extraTasksCard(),
-            const SizedBox(height: 25),
-            _estimatedPrice(),
-            const SizedBox(height: 25),
-            _marketingBox(),
+            _extraTasksChips(),
             const SizedBox(height: 30),
+            _trustBlock(),
+            const SizedBox(height: 40),
             _confirmButton(),
           ],
         ),
@@ -110,49 +111,45 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
     );
   }
 
-// ----------------------------------------------------
-  Widget _title(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 19,
-        fontWeight: FontWeight.w700,
-      ),
-    );
-  }
+// ---- UI HELPERS -----
+
+  Widget _title(String t) => Text(
+        t,
+        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+      );
 
   Widget _addressField() {
     return _card(
       child: TextField(
         controller: addressCtrl,
         decoration: const InputDecoration(
-          contentPadding: EdgeInsets.all(14),
           hintText: "Enter service address",
+          contentPadding: EdgeInsets.all(14),
           border: InputBorder.none,
         ),
       ),
     );
   }
 
+// DATE SELECTOR
   Widget _dateButtons() {
     return _card(
       child: Padding(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(12),
         child: Wrap(
           spacing: 10,
           children: nextThreeDays.map((d) {
-            final isSelected = selectedDate == d;
-
+            final selected = selectedDate == d;
             return ChoiceChip(
-              selected: isSelected,
+              selected: selected,
+              selectedColor: darkGreen,
+              backgroundColor: Colors.grey.shade200,
               label: Text(
                 d,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: selected ? Colors.white : Colors.black,
                 ),
               ),
-              selectedColor: accent,
-              backgroundColor: Colors.grey.shade200,
               onSelected: (_) => setState(() => selectedDate = d),
             );
           }).toList(),
@@ -161,25 +158,25 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
     );
   }
 
+// TIME SELECTOR
   Widget _timeSelector() {
     return _card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        padding: const EdgeInsets.all(12),
         child: Wrap(
           spacing: 10,
           children: timeSlots.map((slot) {
-            final isSelected = selectedTime == slot;
-
+            final selected = selectedTime == slot;
             return ChoiceChip(
+              selected: selected,
+              selectedColor: darkGreen,
+              backgroundColor: Colors.grey.shade200,
               label: Text(
                 slot,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.black,
+                  color: selected ? Colors.white : Colors.black,
                 ),
               ),
-              selected: isSelected,
-              selectedColor: accent,
-              backgroundColor: Colors.grey.shade200,
               onSelected: (_) => setState(() => selectedTime = slot),
             );
           }).toList(),
@@ -188,23 +185,24 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
     );
   }
 
-  Widget _roomSelector({required bool isBedroom}) {
-    int value = isBedroom ? bedrooms : bathrooms;
+// ROOM SELECTOR
+  Widget _roomSelector(bool bedroom) {
+    int value = bedroom ? bedrooms : bathrooms;
 
     return _card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.all(12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(isBedroom ? "Bedrooms" : "Bathrooms",
+            Text(bedroom ? "Bedrooms" : "Bathrooms",
                 style: const TextStyle(fontSize: 16)),
             Row(
               children: [
                 _circleBtn(Icons.remove, () {
                   if (value > 1) {
                     setState(() {
-                      if (isBedroom)
+                      if (bedroom)
                         bedrooms--;
                       else
                         bathrooms--;
@@ -221,7 +219,7 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
                 ),
                 _circleBtn(Icons.add, () {
                   setState(() {
-                    if (isBedroom)
+                    if (bedroom)
                       bedrooms++;
                     else
                       bathrooms++;
@@ -235,130 +233,98 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
     );
   }
 
-  Widget _extraTasksCard() {
-    return _card(
-      child: ListTile(
-        title: const Text(
-          "Extra Tasks",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+  Widget _circleBtn(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: darkGreen,
+          shape: BoxShape.circle,
         ),
-        subtitle: Text(
-          selectedExtras.isEmpty
-              ? "None selected"
-              : "Selected: ${selectedExtras.length}",
-          style: TextStyle(color: Colors.grey.shade700),
-        ),
-        trailing: Icon(Icons.expand_more, color: accent),
-        onTap: _openExtraTaskSheet,
+        padding: const EdgeInsets.all(6),
+        child: Icon(icon, size: 18, color: Colors.white),
       ),
     );
   }
 
-  void _openExtraTaskSheet() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
-      ),
-      builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 25, 20, 30),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Select Extra Tasks",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
-              ),
-              const SizedBox(height: 18),
-              ...extraOptions.map((opt) {
-                final title = opt["title"];
-                final selected = selectedExtras.contains(title);
+// EXTRA TASKS — AIRBNB STYLE
+  Widget _extraTasksChips() {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: extraOptions.map((task) {
+            final isSelected = selectedExtras.contains(task);
 
-                return CheckboxListTile(
-                  title: Text(title),
-                  value: selected,
-                  onChanged: (v) {
-                    setState(() {
-                      if (v == true) {
-                        selectedExtras.add(title);
-                      } else {
-                        selectedExtras.remove(title);
-                      }
-                    });
-                  },
-                );
-              }).toList(),
-              const SizedBox(height: 15),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: accent,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    "Done",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedExtras.remove(task);
+                  } else {
+                    selectedExtras.add(task);
+                  }
+                });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? darkGreen : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                      color: isSelected ? darkGreen : Colors.grey.shade400),
+                ),
+                child: Text(
+                  task,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _estimatedPrice() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: accent.withOpacity(0.07),
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: const Text(
-        "Estimated Price: \$150 – \$400",
-        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-      ),
-    );
-  }
-
-  Widget _marketingBox() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFFBEA),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: const Text(
-        "You pay the cleaner only after the job is fully completed.\n\n"
-        "A small \$9.99 booking fee guarantees your appointment, locks the time slot, "
-        "and ensures a trusted professional is dispatched to your address.\n\n"
-        "Deep cleaning is thorough, detailed, and handled by experts — your home will feel brand new.",
-        style: TextStyle(
-          fontSize: 15,
-          height: 1.45,
-          fontWeight: FontWeight.w500,
+            );
+          }).toList(),
         ),
       ),
     );
   }
 
+// TRUST BLOCK — BRIGHT GREEN
+  // TRUST BLOCK — BRIGHT GREEN
+  Widget _trustBlock() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: softGreen,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const Text(
+        "Estimated Price: \$140 – \$390\n\n"
+        "You’ll never be charged until the job is completed.\n"
+        "Our \$9.99 booking fee simply reserves your time slot and begins the search "
+        "for the best available professional in your area.\n"
+        "We’ll notify you as soon as someone accepts your request.",
+        style: TextStyle(
+          fontSize: 15,
+          height: 1.4,
+          color: Colors.green,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+// CONFIRM BUTTON
   Widget _confirmButton() {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: accent,
+          backgroundColor: buttonGreen,
           padding: const EdgeInsets.symmetric(vertical: 18),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -376,7 +342,7 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
     );
   }
 
-// ----------------------------------------------------
+// CARD UI
   Widget _card({required Widget child}) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
@@ -385,28 +351,13 @@ class _DeepCleaningBookingScreenState extends State<DeepCleaningBookingScreen> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
+            blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+            color: Colors.black.withOpacity(0.07),
+          ),
         ],
       ),
       child: child,
-    );
-  }
-
-  Widget _circleBtn(IconData icon, VoidCallback onTap) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(6),
-        decoration: BoxDecoration(
-          color: accent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: 18, color: Colors.white),
-      ),
     );
   }
 }
