@@ -7,35 +7,24 @@ class StandardCleaningBookingScreen extends StatefulWidget {
 
   @override
   State<StandardCleaningBookingScreen> createState() =>
-      _StandardCleaningBookingScreen();
+      _StandardCleaningBookingScreenState();
 }
 
-class _StandardCleaningBookingScreen
+class _StandardCleaningBookingScreenState
     extends State<StandardCleaningBookingScreen> {
-// Colors
-  final Color buttonGreen = const Color(0xFF25D366); // Confirm button
-  final Color darkGreen = const Color(0xFF2B6E4F); // selectors, accents
-  final Color softGreen = const Color(0xFFDFF3E8); // info blocks
+// COLORS
+  final Color buttonGreen = const Color(0xFF25D366); // WhatsApp Confirm Button
+  final Color darkGreen = const Color(0xFF2B6E4F); // selected chips
+  final Color softGreen = const Color(0xFFDFF3E8); // trust block background
 
+// CONTROLLERS
   final TextEditingController addressCtrl = TextEditingController();
 
-  int bedrooms = 1;
-  int bathrooms = 1;
-
-  List<String> selectedExtras = [];
-
-  final List<String> extraOptions = [
-    "Fridge Cleaning",
-    "Oven Cleaning",
-    "Window Interior",
-    "Cabinet Exterior",
-    "Balcony Sweep",
-    "Baseboard Wipe",
-  ];
-
+// DATE
   String? selectedDate;
   late List<String> nextThreeDays;
 
+// TIME
   String? selectedTime;
 
   final List<String> timeSlots = [
@@ -43,6 +32,22 @@ class _StandardCleaningBookingScreen
     "12 PM – 3 PM",
     "3 PM – 6 PM",
     "6 PM – 9 PM",
+  ];
+
+// BED/BATH
+  int bedrooms = 1;
+  int bathrooms = 1;
+
+// EXTRA TASKS — Airbnb Style Chips
+  List<String> selectedExtras = [];
+
+  final List<String> extraOptions = [
+    "Fridge Cleaning",
+    "Oven Cleaning",
+    "Windows",
+    "Cabinet Exterior",
+    "Balcony Sweep",
+    "Baseboard Wipe",
   ];
 
   @override
@@ -68,7 +73,10 @@ class _StandardCleaningBookingScreen
         title: Text(
           widget.item["title"],
           style: const TextStyle(
-              fontSize: 22, fontWeight: FontWeight.w700, color: Colors.black),
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -92,9 +100,7 @@ class _StandardCleaningBookingScreen
             _roomSelector(false),
             const SizedBox(height: 25),
             _title("Extra Tasks"),
-            _extraTasksCard(),
-            const SizedBox(height: 30),
-            _estimatedPrice(),
+            _extraTasksChips(),
             const SizedBox(height: 30),
             _trustBlock(),
             const SizedBox(height: 40),
@@ -105,11 +111,13 @@ class _StandardCleaningBookingScreen
     );
   }
 
+// TITLE
   Widget _title(String t) => Text(
         t,
         style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
       );
 
+// ADDRESS FIELD
   Widget _addressField() {
     return _card(
       child: TextField(
@@ -123,7 +131,7 @@ class _StandardCleaningBookingScreen
     );
   }
 
-// DATE
+// DATE SELECTOR
   Widget _dateButtons() {
     return _card(
       child: Padding(
@@ -138,7 +146,9 @@ class _StandardCleaningBookingScreen
               backgroundColor: Colors.grey.shade200,
               label: Text(
                 d,
-                style: TextStyle(color: selected ? Colors.white : Colors.black),
+                style: TextStyle(
+                  color: selected ? Colors.white : Colors.black,
+                ),
               ),
               onSelected: (_) => setState(() => selectedDate = d),
             );
@@ -148,7 +158,7 @@ class _StandardCleaningBookingScreen
     );
   }
 
-// TIME
+// TIME SELECTOR
   Widget _timeSelector() {
     return _card(
       child: Padding(
@@ -163,7 +173,9 @@ class _StandardCleaningBookingScreen
               backgroundColor: Colors.grey.shade200,
               label: Text(
                 slot,
-                style: TextStyle(color: selected ? Colors.white : Colors.black),
+                style: TextStyle(
+                  color: selected ? Colors.white : Colors.black,
+                ),
               ),
               onSelected: (_) => setState(() => selectedTime = slot),
             );
@@ -173,7 +185,7 @@ class _StandardCleaningBookingScreen
     );
   }
 
-// BED / BATH
+// ROOM SELECTOR
   Widget _roomSelector(bool bedroom) {
     int value = bedroom ? bedrooms : bathrooms;
 
@@ -235,99 +247,53 @@ class _StandardCleaningBookingScreen
     );
   }
 
-// EXTRA TASKS
-  Widget _extraTasksCard() {
+// EXTRA TASKS — AIRBNB STYLE
+  Widget _extraTasksChips() {
     return _card(
-      child: ListTile(
-        title: const Text(
-          "Extra Tasks",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(
-          selectedExtras.isEmpty
-              ? "None selected"
-              : "Selected: ${selectedExtras.length}",
-          style: TextStyle(color: Colors.grey.shade700),
-        ),
-        trailing: Icon(Icons.expand_more, color: darkGreen),
-        onTap: _openExtrasSheet,
-      ),
-    );
-  }
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: extraOptions.map((task) {
+            final isSelected = selectedExtras.contains(task);
 
-  void _openExtrasSheet() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(18))),
-      builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 30),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Select Extra Tasks",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 15),
-              ...extraOptions.map((title) {
-                return CheckboxListTile(
-                  title: Text(title),
-                  value: selectedExtras.contains(title),
-                  activeColor: darkGreen,
-                  onChanged: (v) {
-                    setState(() {
-                      if (v == true)
-                        selectedExtras.add(title);
-                      else
-                        selectedExtras.remove(title);
-                    });
-                  },
-                );
-              }),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: darkGreen,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    "Done",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600),
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  if (isSelected) {
+                    selectedExtras.remove(task);
+                  } else {
+                    selectedExtras.add(task);
+                  }
+                });
+              },
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? darkGreen : Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(
+                      color: isSelected ? darkGreen : Colors.grey.shade400),
+                ),
+                child: Text(
+                  task,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black87,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-// PRICE
-  Widget _estimatedPrice() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: softGreen,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: const Text(
-        "Estimated Price: \$80 – \$190",
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            );
+          }).toList(),
+        ),
       ),
     );
   }
 
-// TRUST BLOCK
+// TRUST BLOCK — BRIGHT GREEN
   Widget _trustBlock() {
     return Container(
       padding: const EdgeInsets.all(18),
@@ -339,8 +305,13 @@ class _StandardCleaningBookingScreen
         "You pay the cleaner only after the job is fully completed.\n\n"
         "A small \$9.99 booking fee guarantees your appointment, locks the time slot, "
         "and ensures a trusted professional is dispatched to your address.\n\n"
-        "Your home is in safe hands — we deliver quality every single time.",
-        style: TextStyle(fontSize: 15, height: 1.4),
+        "Your home is in safe hands - we deliver quality, every single time.",
+        style: TextStyle(
+          fontSize: 15,
+          height: 1.4,
+          color: Colors.green,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -360,12 +331,16 @@ class _StandardCleaningBookingScreen
         child: const Text(
           "Confirm Booking — \$9.99",
           style: TextStyle(
-              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
   }
 
+// CARD WRAPPER
   Widget _card({required Widget child}) {
     return Container(
       margin: const EdgeInsets.only(top: 10),
