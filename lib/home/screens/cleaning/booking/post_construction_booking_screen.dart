@@ -12,126 +12,54 @@ class PostConstructionBookingScreen extends StatefulWidget {
 
 class _PostConstructionBookingScreenState
     extends State<PostConstructionBookingScreen> {
-  final TextEditingController addressCtrl = TextEditingController();
-  final TextEditingController notesCtrl = TextEditingController();
+  String? selectedLevel;
+  String? selectedDay;
+  String? selectedTime;
 
-  int bedrooms = 1;
-  int bathrooms = 1;
+  /// ---- 3 DAY PICKER ----
+  List<String> getNextThreeDays() {
+    final now = DateTime.now();
+    return List.generate(3, (i) {
+      final date = now.add(Duration(days: i + 1));
+      return "${date.month}/${date.day}/${date.year}";
+    });
+  }
 
-  String debrisLevel = "Light";
-  bool heavyDust = false;
-  bool paintSpots = false;
-  bool pets = false;
-
-  List<String> extraTasks = [];
-
-  final List<String> extras = [
-    "Window detailing",
-    "Fridge cleaning",
-    "Oven cleaning",
-    "Cabinet interior cleaning",
-    "Garage sweeping",
-  ];
-
+  /// ---- TIME SLOTS ----
   final List<String> timeSlots = [
-    "9 AM – 12 PM",
-    "12 PM – 6 PM",
-    "9 AM – 6 PM",
-    "6 PM – 9 PM",
+    "9 AM - 12 PM",
+    "12 PM - 6 PM",
+    "9 AM - 6 PM",
+    "6 PM - 9 PM",
   ];
 
-  String? selectedSlot;
-  DateTime? selectedDay;
-
-  @override
-  void initState() {
-    super.initState();
-    selectedDay = DateTime.now();
-  }
-
-// DAY PICKER — only 3 days
-  Future<void> pickDay() async {
-    DateTime now = DateTime.now();
-    List<DateTime> days = [
-      now,
-      now.add(const Duration(days: 1)),
-      now.add(const Duration(days: 2)),
-    ];
-
-    await showModalBottomSheet(
-      context: context,
-      builder: (ctx) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Select Day",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-              ...days.map(
-                (d) => ListTile(
-                  title: Text(
-                    "${d.month}/${d.day}/${d.year}",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  onTap: () {
-                    setState(() => selectedDay = d);
-                    Navigator.pop(context);
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-// PRICE CALCULATION
-  double calculateTotal() {
-    double base = 180; // минимальная цена post-construction
-
-    double bedroomCost = bedrooms * 15;
-    double bathroomCost = bathrooms * 12;
-
-    double debrisCost = 0;
-    if (debrisLevel == "Medium") debrisCost = 30;
-    if (debrisLevel == "Heavy") debrisCost = 60;
-
-    double dustCost = heavyDust ? 25 : 0;
-    double paintCost = paintSpots ? 20 : 0;
-    double petsCost = pets ? 10 : 0;
-
-    double extrasCost = extraTasks.length * 10;
-
-    return base +
-        bedroomCost +
-        bathroomCost +
-        debrisCost +
-        dustCost +
-        paintCost +
-        petsCost +
-        extrasCost;
-  }
+  /// ---- SERVICE LEVELS ----
+  final Map<String, Map<String, int>> levels = {
+    "Light Post-Construction": {"min": 200, "max": 260},
+    "Medium Post-Construction": {"min": 260, "max": 340},
+    "Heavy Post-Construction": {"min": 340, "max": 430},
+    "Full Deep Construction Cleanup": {"min": 430, "max": 600},
+  };
 
   @override
   Widget build(BuildContext context) {
-    double total = calculateTotal();
+    final days = getNextThreeDays();
+
+    final price = selectedLevel != null
+        ? levels[selectedLevel]!
+        : {
+            "min": widget.item["minPrice"],
+            "max": widget.item["maxPrice"],
+          };
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: Text(
-          widget.item["title"] ?? "Post-Construction Cleaning",
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-          ),
+        title: const Text(
+          "Post-Construction Cleaning",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
       ),
       body: SingleChildScrollView(
@@ -139,331 +67,200 @@ class _PostConstructionBookingScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-// ADDRESS
-            title("Service Address"),
-            whiteCard(
-              child: TextField(
-                controller: addressCtrl,
-                maxLines: 2,
-                decoration: const InputDecoration(
-                  hintText: "Enter your address",
-                  border: InputBorder.none,
-                ),
+            /// IMAGE
+            ClipRRect(
+              borderRadius: BorderRadius.circular(14),
+              child: Image.asset(
+                widget.item["image"],
+                height: 220,
+                width: double.infinity,
+                fit: BoxFit.cover,
               ),
             ),
+
             const SizedBox(height: 22),
 
-// BEDROOMS
-            title("How many bedrooms?"),
-            bigNumberSelector(
-              value: bedrooms,
-              onChanged: (v) => setState(() => bedrooms = v),
-            ),
-            const SizedBox(height: 22),
-
-// BATHROOMS
-            title("How many bathrooms?"),
-            bigNumberSelector(
-              value: bathrooms,
-              onChanged: (v) => setState(() => bathrooms = v),
-            ),
-            const SizedBox(height: 22),
-
-// DEBRIS LEVEL
-            title("Debris Level"),
-            Wrap(
-              spacing: 12,
-              children: [
-                debrisOption("Light"),
-                debrisOption("Medium"),
-                debrisOption("Heavy"),
-              ],
-            ),
-            const SizedBox(height: 22),
-
-// HEAVY DUST
-            title("Any heavy dust?"),
-            Row(
-              children: [
-                bigChoice("Yes", heavyDust == true,
-                    () => setState(() => heavyDust = true)),
-                const SizedBox(width: 12),
-                bigChoice("No", heavyDust == false,
-                    () => setState(() => heavyDust = false)),
-              ],
-            ),
-            const SizedBox(height: 22),
-
-// PAINT SPOTS
-            title("Any paint spots?"),
-            Row(
-              children: [
-                bigChoice("Yes", paintSpots == true,
-                    () => setState(() => paintSpots = true)),
-                const SizedBox(width: 12),
-                bigChoice("No", paintSpots == false,
-                    () => setState(() => paintSpots = false)),
-              ],
+            /// SELECT LEVEL
+            const Text(
+              "Select Cleanup Level",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
 
-            const SizedBox(height: 22),
+            const SizedBox(height: 8),
 
-// PETS
-            title("Any pets in your home?"),
-            Row(
-              children: [
-                bigChoice(
-                    "Yes", pets == true, () => setState(() => pets = true)),
-                const SizedBox(width: 12),
-                bigChoice(
-                    "No", pets == false, () => setState(() => pets = false)),
-              ],
-            ),
-
-            const SizedBox(height: 22),
-
-// EXTRA TASKS
-            title("Extra Tasks"),
-            Column(
-              children: extras.map((t) {
-                return CheckboxListTile(
-                  activeColor: const Color(0xFF23A373),
-                  value: extraTasks.contains(t),
-                  title: Text(t),
-                  onChanged: (checked) {
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedLevel,
+                  isExpanded: true,
+                  hint: const Text("Choose level"),
+                  items: levels.keys.map((level) {
+                    return DropdownMenuItem(
+                      value: level,
+                      child: Text(level),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
                     setState(() {
-                      if (checked == true) {
-                        extraTasks.add(t);
-                      } else {
-                        extraTasks.remove(t);
-                      }
+                      selectedLevel = value;
                     });
                   },
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 22),
-
-// DAY
-            title("Select Day"),
-            whiteCard(
-              child: ListTile(
-                title: Text(
-                  "${selectedDay!.month}/${selectedDay!.day}/${selectedDay!.year}",
-                  style: const TextStyle(fontSize: 16),
                 ),
-                trailing:
-                    const Icon(Icons.calendar_today, color: Color(0xFF23A373)),
-                onTap: pickDay,
               ),
             ),
+
             const SizedBox(height: 22),
 
-// TIME
-            title("Select Time"),
-            Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: timeSlots.map((slot) {
-                bool sel = selectedSlot == slot;
-                return GestureDetector(
-                  onTap: () => setState(() => selectedSlot = slot),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 12),
-                    decoration: BoxDecoration(
-                      color:
-                          sel ? const Color(0xFF23A373) : Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Text(
-                      slot,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: sel ? Colors.white : Colors.black,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
+            /// SELECT DAY
+            const Text(
+              "Select Day",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedDay,
+                  isExpanded: true,
+                  hint: const Text("Choose day"),
+                  items: days.map((day) {
+                    return DropdownMenuItem(
+                      value: day,
+                      child: Text(day),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedDay = value;
+                    });
+                  },
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 22),
+
+            /// SELECT TIME
+            const Text(
+              "Select Time",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: selectedTime,
+                  isExpanded: true,
+                  hint: const Text("Choose time"),
+                  items: timeSlots.map((slot) {
+                    return DropdownMenuItem(
+                      value: slot,
+                      child: Text(slot),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedTime = value;
+                    });
+                  },
+                ),
+              ),
             ),
 
             const SizedBox(height: 25),
 
-// NOTES
-            title("Extra Notes"),
-            whiteCard(
-              child: TextField(
-                controller: notesCtrl,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  hintText: "Any additional details...",
-                  border: InputBorder.none,
-                ),
+            /// PRICE
+            Text(
+              "\$${price["min"]} - \$${price["max"]}",
+              style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green),
+            ),
+
+            const SizedBox(height: 25),
+
+            /// QUALITY DESCRIPTION
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade100,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Text(
+                "Our post-construction cleaning includes:\n"
+                "• Heavy dust removal (walls, baseboards, vents)\n"
+                "• Vacuuming & detailed floor cleaning\n"
+                "• Sticker, glue, and paint splatter removal\n"
+                "• Window & glass cleaning + track detailing\n"
+                "• Cabinet, closet, and drawer cleaning\n"
+                "• Bathroom & kitchen deep sanitation\n"
+                "• Professional contractor-grade equipment\n\n"
+                "You pay only after the work is completed.\n"
+                "Booking fee \$9.99 guarantees worker arrival.",
+                style: TextStyle(fontSize: 15),
               ),
             ),
 
             const SizedBox(height: 30),
 
-// PRICE SUMMARY
-            title("Price Summary"),
-            const SizedBox(height: 10),
-            Text("Post-Construction Base: \$180"),
-            Text("Bedrooms: $bedrooms × \$15 = \$${bedrooms * 15}"),
-            Text("Bathrooms: $bathrooms × \$12 = \$${bathrooms * 12}"),
-            Text("Debris: $debrisLevel"),
-            Text("Heavy Dust: ${heavyDust ? "\$25" : "\$0"}"),
-            Text("Paint Spots: ${paintSpots ? "\$20" : "\$0"}"),
-            Text("Pets: ${pets ? "\$10" : "\$0"}"),
-            Text("Extras: \$${extraTasks.length * 10}"),
-
-            const SizedBox(height: 10),
-            Text(
-              "Total (pay to worker): \$${total.toStringAsFixed(2)}",
-              style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "You will pay this total directly to the cleaner after the job is completed.",
-              style: TextStyle(fontSize: 13, color: Colors.black54),
-            ),
-            const SizedBox(height: 14),
-            const Text(
-              "Booking Fee: \$9.99 (paid now)",
-              style: TextStyle(fontSize: 14, color: Colors.black54),
-            ),
-
-            const SizedBox(height: 25),
-
-// BUTTON
+            /// CONFIRM BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (selectedLevel == null ||
+                      selectedDay == null ||
+                      selectedTime == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please select all fields"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+// Later — send to Telegram
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF23A373),
+                  backgroundColor: Colors.green,
                   padding: const EdgeInsets.symmetric(vertical: 18),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14)),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
                 ),
                 child: const Text(
-                  "Confirm Booking for \$9.99",
+                  "Confirm Booking for 9.99",
                   style: TextStyle(
                       fontSize: 18,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
                 ),
               ),
             ),
+
             const SizedBox(height: 40),
           ],
         ),
       ),
-    );
-  }
-
-// HELPERS ------------------------------------------------------
-
-  Widget title(String t) => Text(
-        t,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
-      );
-
-  Widget whiteCard({required Widget child}) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
-
-  Widget bigChoice(String text, bool selected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFF23A373) : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: selected ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget debrisOption(String text) {
-    bool selected = debrisLevel == text;
-    return GestureDetector(
-      onTap: () => setState(() => debrisLevel = text),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        decoration: BoxDecoration(
-          color: selected ? const Color(0xFF23A373) : Colors.grey.shade300,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 15,
-            color: selected ? Colors.white : Colors.black,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget bigNumberSelector({
-    required int value,
-    required ValueChanged<int> onChanged,
-  }) {
-    return Row(
-      children: List.generate(6, (i) {
-        int n = i + 1;
-        bool selected = value == n;
-        return Padding(
-          padding: const EdgeInsets.only(right: 10),
-          child: GestureDetector(
-            onTap: () => onChanged(n),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-              decoration: BoxDecoration(
-                color:
-                    selected ? const Color(0xFF23A373) : Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Text(
-                "$n",
-                style: TextStyle(
-                  fontSize: 16,
-                  color: selected ? Colors.white : Colors.black,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ),
-        );
-      }),
     );
   }
 }

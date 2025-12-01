@@ -1,36 +1,31 @@
 import 'package:flutter/material.dart';
 
-class OfficeCleaningBookingScreen extends StatefulWidget {
+class VehicleCleaningBookingScreen extends StatefulWidget {
   final Map<String, dynamic> item;
 
-  const OfficeCleaningBookingScreen({super.key, required this.item});
+  const VehicleCleaningBookingScreen({super.key, required this.item});
 
   @override
-  State<OfficeCleaningBookingScreen> createState() =>
-      _OfficeCleaningBookingScreenState();
+  State<VehicleCleaningBookingScreen> createState() =>
+      _VehicleCleaningBookingScreenState();
 }
 
-class _OfficeCleaningBookingScreenState
-    extends State<OfficeCleaningBookingScreen> {
-  String? selectedOfficeSize;
+class _VehicleCleaningBookingScreenState
+    extends State<VehicleCleaningBookingScreen> {
+  String? selectedType;
   String? selectedDay;
   String? selectedTime;
 
-  bool windowsCleaning = false;
-  bool trashRemoval = false;
-  bool kitchenCleaning = false;
-  bool restroomCleaning = false;
-
-  /// ---- 3 DAY PICKER ----
+  /// ---- ДНИ: 3 дня ----
   List<String> getNextThreeDays() {
     final now = DateTime.now();
     return List.generate(3, (i) {
-      final date = now.add(Duration(days: i + 1));
-      return "${date.month}/${date.day}/${date.year}";
+      final d = now.add(Duration(days: i + 1));
+      return "${d.month}/${d.day}/${d.year}";
     });
   }
 
-  /// ---- TIME SLOTS ----
+  /// ---- ВРЕМЯ ----
   final List<String> timeSlots = [
     "9 AM - 12 PM",
     "12 PM - 6 PM",
@@ -38,36 +33,30 @@ class _OfficeCleaningBookingScreenState
     "6 PM - 9 PM",
   ];
 
-  /// ---- OFFICE SIZE ----
-  final Map<String, Map<String, int>> officeSizes = {
-    "Small Office (1–3 rooms)": {"min": 100, "max": 150},
-    "Medium Office (4–7 rooms)": {"min": 150, "max": 220},
-    "Large Office (8–12 rooms)": {"min": 220, "max": 320},
-    "Corporate Office (12+ rooms)": {"min": 320, "max": 500},
-  };
+  /// ---- ЦЕНЫ ПО ТИПАМ ----
+  Map<String, dynamic> getPriceForType(String? type) {
+    switch (type) {
+      case "Car Standard Cleaning":
+        return {"min": 120, "max": 140};
 
-  /// ---- EXTRA PRICES ----
-  int getExtrasPrice() {
-    int total = 0;
-    if (windowsCleaning) total += 20;
-    if (trashRemoval) total += 15;
-    if (kitchenCleaning) total += 25;
-    if (restroomCleaning) total += 30;
-    return total;
+      case "Car Deep Cleaning":
+        return {"min": 300, "max": 500};
+
+      case "Truck Standard Cleaning":
+        return {"min": 160, "max": 250};
+
+      case "Truck Deep Cleaning":
+        return {"min": 400, "max": 700};
+
+      default:
+        return {"min": widget.item["minPrice"], "max": widget.item["maxPrice"]};
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final days = getNextThreeDays();
-
-    final base = selectedOfficeSize != null
-        ? officeSizes[selectedOfficeSize]!
-        : {
-            "min": widget.item["minPrice"],
-            "max": widget.item["maxPrice"],
-          };
-
-    int extra = getExtrasPrice();
+    final List<String> threeDays = getNextThreeDays();
+    final prices = getPriceForType(selectedType);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -75,7 +64,7 @@ class _OfficeCleaningBookingScreenState
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          "Office Cleaning",
+          "Vehicle Cleaning Booking",
           style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
         ),
       ),
@@ -84,7 +73,7 @@ class _OfficeCleaningBookingScreenState
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// IMAGE
+            /// ---- IMAGE ----
             ClipRRect(
               borderRadius: BorderRadius.circular(14),
               child: Image.asset(
@@ -97,8 +86,9 @@ class _OfficeCleaningBookingScreenState
 
             const SizedBox(height: 22),
 
+            /// ---- SELECT TYPE ----
             const Text(
-              "Office Size",
+              "Select Service Type",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 8),
@@ -111,18 +101,23 @@ class _OfficeCleaningBookingScreenState
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
-                  value: selectedOfficeSize,
+                  value: selectedType,
                   isExpanded: true,
-                  hint: const Text("Select office size"),
-                  items: officeSizes.keys.map((opt) {
+                  hint: const Text("Choose type"),
+                  items: [
+                    "Car Standard Cleaning",
+                    "Car Deep Cleaning",
+                    "Truck Standard Cleaning",
+                    "Truck Deep Cleaning",
+                  ].map((type) {
                     return DropdownMenuItem(
-                      value: opt,
-                      child: Text(opt),
+                      value: type,
+                      child: Text(type),
                     );
                   }).toList(),
                   onChanged: (value) {
                     setState(() {
-                      selectedOfficeSize = value;
+                      selectedType = value;
                     });
                   },
                 ),
@@ -131,35 +126,11 @@ class _OfficeCleaningBookingScreenState
 
             const SizedBox(height: 22),
 
-            const Text(
-              "Extra Services",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-
-            const SizedBox(height: 8),
-
-            Column(
-              children: [
-                buildCheckbox("Windows Cleaning (+\$20)", windowsCleaning,
-                    (v) => setState(() => windowsCleaning = v)),
-                buildCheckbox("Trash Removal (+\$15)", trashRemoval,
-                    (v) => setState(() => trashRemoval = v)),
-                buildCheckbox("Kitchen Deep Cleaning (+\$25)", kitchenCleaning,
-                    (v) => setState(() => kitchenCleaning = v)),
-                buildCheckbox(
-                    "Restroom Deep Cleaning (+\$30)",
-                    restroomCleaning,
-                    (v) => setState(() => restroomCleaning = v)),
-              ],
-            ),
-
-            const SizedBox(height: 22),
-
+            /// ---- DAY ----
             const Text(
               "Select Day",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
-
             const SizedBox(height: 8),
 
             Container(
@@ -173,14 +144,16 @@ class _OfficeCleaningBookingScreenState
                   value: selectedDay,
                   isExpanded: true,
                   hint: const Text("Choose day"),
-                  items: days.map((day) {
+                  items: threeDays.map((day) {
                     return DropdownMenuItem(
                       value: day,
                       child: Text(day),
                     );
                   }).toList(),
                   onChanged: (value) {
-                    setState(() => selectedDay = value);
+                    setState(() {
+                      selectedDay = value;
+                    });
                   },
                 ),
               ),
@@ -188,11 +161,11 @@ class _OfficeCleaningBookingScreenState
 
             const SizedBox(height: 22),
 
+            /// ---- TIME ----
             const Text(
               "Select Time",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
             ),
-
             const SizedBox(height: 8),
 
             Container(
@@ -206,14 +179,16 @@ class _OfficeCleaningBookingScreenState
                   value: selectedTime,
                   isExpanded: true,
                   hint: const Text("Choose time"),
-                  items: timeSlots.map((slot) {
+                  items: timeSlots.map((time) {
                     return DropdownMenuItem(
-                      value: slot,
-                      child: Text(slot),
+                      value: time,
+                      child: Text(time),
                     );
                   }).toList(),
                   onChanged: (value) {
-                    setState(() => selectedTime = value);
+                    setState(() {
+                      selectedTime = value;
+                    });
                   },
                 ),
               ),
@@ -221,9 +196,9 @@ class _OfficeCleaningBookingScreenState
 
             const SizedBox(height: 25),
 
-            /// PRICE CALCULATION
+            /// ---- PRICE ----
             Text(
-              "\$${base["min"]! + extra} - \$${base["max"]! + extra}",
+              "\$${prices['min']} - \$${prices['max']}",
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -233,46 +208,46 @@ class _OfficeCleaningBookingScreenState
 
             const SizedBox(height: 25),
 
-            /// QUALITY DESCRIPTION
+            /// ---- QUALITY INFO ----
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: Colors.yellow.shade100,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Text(
-                "Our Office Cleaning Includes:\n"
-                "• Desk & workspace sanitizing\n"
-                "• Floor vacuuming & mopping\n"
-                "• Trash disposal & dusting\n"
-                "• Meeting room cleaning\n"
-                "• Kitchen & restroom sanitation\n"
-                "• Professional commercial-grade equipment\n\n"
-                "Booking fee \$9.99 guarantees a confirmed cleaner.\n"
-                "You pay the remaining amount after the job is completed.",
+                "Our technicians provide premium interior cleaning:\n"
+                "• Professional vacuum + steam cleaning\n"
+                "• Deep stain removal\n"
+                "• Leather & fabric restoration\n"
+                "• Pressure air cleaning of vents\n"
+                "• Disinfection & odor removal\n\n"
+                "You only pay after the job is completed.\n"
+                "Booking fee \$9.99 ensures guaranteed arrival.",
                 style: TextStyle(fontSize: 15),
               ),
             ),
+
             const SizedBox(height: 30),
 
-            /// CONFIRM BUTTON
+            /// ---- CONFIRM BUTTON ----
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  if (selectedOfficeSize == null ||
+                  if (selectedType == null ||
                       selectedDay == null ||
                       selectedTime == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Please select office size, day & time"),
+                        content: Text("Please select all fields"),
                         backgroundColor: Colors.red,
                       ),
                     );
                     return;
                   }
 
-// SEND TO TELEGRAM LATER
+// later: send to Telegram
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
@@ -284,9 +259,10 @@ class _OfficeCleaningBookingScreenState
                 child: const Text(
                   "Confirm Booking for 9.99",
                   style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -295,16 +271,6 @@ class _OfficeCleaningBookingScreenState
           ],
         ),
       ),
-    );
-  }
-
-  Widget buildCheckbox(String title, bool value, Function(bool) onChanged) {
-    return CheckboxListTile(
-      value: value,
-      onChanged: (v) => onChanged(v!),
-      title: Text(title),
-      activeColor: Colors.green,
-      controlAffinity: ListTileControlAffinity.leading,
     );
   }
 }

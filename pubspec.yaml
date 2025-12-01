@@ -41,11 +41,6 @@ flutter:
     - assets/images/office_cleaning.jpg
     - assets/images/post_construction_cleaning.jpg
     - assets/images/carpet_cleaning.jpg
-    - assets/images/car_standard_cleaning.jpg
-    - assets/images/car_deep_cleaning.jpg
-    - assets/images/truck_cabin_cleaning.jpg
-    - assets/images/truck_deep_cleaning.jpg
-    - assets/images/driveway_cleaning.jpg
     - assets/images/sidewalk_cleaning.jpg
     - assets/images/handyman_light.jpg
     - assets/images/handyman_fan.jpg
@@ -116,3 +111,8 @@ flutter:
     - assets/images/furniture_disassembly.jpg
     - assets/images/clean_bathroom_fan.jpg
     - assets/images/air_filter.jpg
+    - assets/images/vehicle_cleaning.jpg
+    - assets/images/gutter_cleaning.jpg
+    - assets/images/lawn_care.jpg
+    - assets/images/sidewalk_cleaning.jpg
+    - assets/images/outside_window_cleaning.jpg
