@@ -88,8 +88,8 @@ const List<CleaningService> cleaningServices = [
   CleaningService(
     title: "Vehicle Interior Cleaning",
     subtitle: "Car & truck interior detailing",
-    minPrice: 110, // 120 → 110
-    maxPrice: 690, // 700 → 690
+    minPrice: 60,
+    maxPrice: 300,
     image: "assets/images/vehicle_cleaning.jpg",
     badge: "Popular",
   ),

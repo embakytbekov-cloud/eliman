@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class SidewalkCleaningBookingScreen extends StatefulWidget {
+class OutsideWindowCleaningBookingScreen extends StatefulWidget {
   final Map<String, dynamic> item;
 
-  const SidewalkCleaningBookingScreen({super.key, required this.item});
+  const OutsideWindowCleaningBookingScreen({super.key, required this.item});
 
   @override
-  State<SidewalkCleaningBookingScreen> createState() =>
-      _SidewalkCleaningBookingScreenState();
+  State<OutsideWindowCleaningBookingScreen> createState() =>
+      _OutsideWindowCleaningBookingScreenState();
 }
 
-class _SidewalkCleaningBookingScreenState
-    extends State<SidewalkCleaningBookingScreen> {
+class _OutsideWindowCleaningBookingScreenState
+    extends State<OutsideWindowCleaningBookingScreen> {
   // COLORS
   final Color darkGreen = const Color(0xFF2B6E4F);
   final Color softGreen = const Color(0xFFDFF3E8);
@@ -20,20 +20,37 @@ class _SidewalkCleaningBookingScreenState
   // CONTROLLERS
   final TextEditingController addressCtrl = TextEditingController();
 
-  // CLEANING TYPE
-  String? selectedType;
+  // FIELDS
+  String? selectedSurface; // inside / outside / both
+  int floors = 1;
 
-  final List<String> types = [
-    "Snow Removal",
-    "Power Washing",
-    "Salt Spread",
-    "Ice Melt Treatment",
+  List<String> selectedWindowCount = [];
+  List<String> selectedExtras = [];
+
+  // OPTIONS
+  final List<String> surfaces = [
+    "Outside Only",
+    "Inside Only",
+    "Inside + Outside"
   ];
 
-  // SIDEWALK LENGTH
-  int length = 10; // in feet
+  final List<String> windowCountOptions = [
+    "1–10",
+    "11–20",
+    "21–30",
+    "31–50",
+    "50+"
+  ];
 
-  // TIME & DATE
+  final List<String> extras = [
+    "Screen Cleaning",
+    "Track Cleaning",
+    "Frame Wipe",
+    "Sill Cleaning",
+    "Hard Water Removal"
+  ];
+
+  // DATE / TIME
   String? selectedDate;
   String? selectedTime;
 
@@ -69,10 +86,7 @@ class _SidewalkCleaningBookingScreenState
         title: Text(
           widget.item["title"],
           style: const TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          ),
+              fontSize: 22, fontWeight: FontWeight.w700, color: Colors.black),
         ),
       ),
       body: SingleChildScrollView(
@@ -82,25 +96,56 @@ class _SidewalkCleaningBookingScreenState
           children: [
             _title("Address"),
             _addressField(),
-            const SizedBox(height: 22),
-            _title("Service Type"),
+            const SizedBox(height: 25),
+            _title("Cleaning Type"),
             _chips(
-              options: types,
-              selected: selectedType,
-              onSelect: (v) => setState(() => selectedType = v),
+              options: surfaces,
+              selected: selectedSurface,
+              onSelect: (v) => setState(() => selectedSurface = v),
             ),
-            const SizedBox(height: 22),
-            _title("Sidewalk Length (ft)"),
-            _lengthSelector(),
-            const SizedBox(height: 22),
+            const SizedBox(height: 25),
+            _title("How many floors?"),
+            _floorSelector(),
+            const SizedBox(height: 25),
+            _title("Window Count"),
+            _multiChips(
+              options: windowCountOptions,
+              selectedList: selectedWindowCount,
+              onTap: (v) {
+                setState(() {
+                  if (selectedWindowCount.contains(v)) {
+                    selectedWindowCount.remove(v);
+                  } else {
+                    selectedWindowCount.clear();
+                    selectedWindowCount.add(v);
+                  }
+                });
+              },
+            ),
+            const SizedBox(height: 25),
+            _title("Extra Services"),
+            _multiChips(
+              options: extras,
+              selectedList: selectedExtras,
+              onTap: (v) {
+                setState(() {
+                  if (selectedExtras.contains(v)) {
+                    selectedExtras.remove(v);
+                  } else {
+                    selectedExtras.add(v);
+                  }
+                });
+              },
+            ),
+            const SizedBox(height: 25),
             _title("Select Date"),
             _dateSelector(),
-            const SizedBox(height: 22),
+            const SizedBox(height: 25),
             _title("Select Time"),
             _timeSelector(),
             const SizedBox(height: 30),
             _trustBlock(),
-            const SizedBox(height: 30),
+            const SizedBox(height: 35),
             _confirmButton(),
           ],
         ),
@@ -109,12 +154,14 @@ class _SidewalkCleaningBookingScreenState
   }
 
   // ----------------------------
-  // COMPONENTS
+  //  COMPONENTS
   // ----------------------------
-
-  Widget _title(String text) => Text(
-        text,
-        style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+  Widget _title(String t) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(
+          t,
+          style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+        ),
       );
 
   Widget _addressField() {
@@ -124,13 +171,13 @@ class _SidewalkCleaningBookingScreenState
         decoration: const InputDecoration(
           hintText: "Enter service address",
           border: InputBorder.none,
-          contentPadding: EdgeInsets.all(16),
+          contentPadding: EdgeInsets.all(14),
         ),
       ),
     );
   }
 
-  // CHIPS
+  // CLEANING TYPE CHIPS
   Widget _chips({
     required List<String> options,
     required String? selected,
@@ -138,9 +185,8 @@ class _SidewalkCleaningBookingScreenState
   }) {
     return Wrap(
       spacing: 10,
-      runSpacing: 10,
       children: options.map((op) {
-        final active = selected == op;
+        final bool active = selected == op;
         return ChoiceChip(
           label: Text(
             op,
@@ -155,32 +201,63 @@ class _SidewalkCleaningBookingScreenState
     );
   }
 
-  // LENGTH STEPPER
-  Widget _lengthSelector() {
+  // MULTI SELECT CHIPS
+  Widget _multiChips({
+    required List<String> options,
+    required List<String> selectedList,
+    required Function(String) onTap,
+  }) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: options.map((op) {
+        final active = selectedList.contains(op);
+        return GestureDetector(
+          onTap: () => onTap(op),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: active ? darkGreen : Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              op,
+              style: TextStyle(
+                color: active ? Colors.white : Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  // FLOORS STEPPER
+  Widget _floorSelector() {
     return _card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text("Length (ft)", style: TextStyle(fontSize: 16)),
+            const Text("Floors", style: TextStyle(fontSize: 16)),
             Row(
               children: [
                 _circleBtn(Icons.remove, () {
-                  if (length > 5) setState(() => length -= 5);
+                  if (floors > 1) setState(() => floors--);
                 }),
                 const SizedBox(width: 12),
                 Text(
-                  "$length ft",
+                  "$floors",
                   style: const TextStyle(
                       fontSize: 18, fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(width: 12),
-                _circleBtn(Icons.add, () {
-                  setState(() => length += 5);
-                }),
+                _circleBtn(Icons.add, () => setState(() => floors++)),
               ],
-            ),
+            )
           ],
         ),
       ),
@@ -202,7 +279,7 @@ class _SidewalkCleaningBookingScreenState
     );
   }
 
-  // DATE SELECTOR
+  // DATE
   Widget _dateSelector() {
     return _card(
       child: Padding(
@@ -227,7 +304,7 @@ class _SidewalkCleaningBookingScreenState
     );
   }
 
-  // TIME SELECTOR
+  // TIME
   Widget _timeSelector() {
     return _card(
       child: Padding(
@@ -261,7 +338,7 @@ class _SidewalkCleaningBookingScreenState
         borderRadius: BorderRadius.circular(14),
       ),
       child: const Text(
-        "Estimated Price: \$50 – \$90\n\n"
+        "Estimated Price: \$XX – \$XX\n\n"
         "You’ll never be charged until the job is completed.\n"
         "Our \$9.99 booking fee simply reserves your time slot and begins the search for the best available professional.\n\n"
         "We’ll notify you as soon as someone accepts your request.",
@@ -270,7 +347,6 @@ class _SidewalkCleaningBookingScreenState
     );
   }
 
-  // CONFIRM BUTTON
   Widget _confirmButton() {
     return SizedBox(
       width: double.infinity,
@@ -291,7 +367,6 @@ class _SidewalkCleaningBookingScreenState
     );
   }
 
-  // CARD
   Widget _card({required Widget child}) {
     return Container(
       margin: const EdgeInsets.only(top: 10),

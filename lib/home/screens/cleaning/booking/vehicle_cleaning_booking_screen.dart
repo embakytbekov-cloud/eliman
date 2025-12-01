@@ -12,265 +12,352 @@ class VehicleCleaningBookingScreen extends StatefulWidget {
 
 class _VehicleCleaningBookingScreenState
     extends State<VehicleCleaningBookingScreen> {
-  String? selectedType;
-  String? selectedDay;
+  // COLORS
+  final Color mainGreen = const Color(0xFF23A373);
+  final Color tagGreen = const Color(0xFF2B6E4F);
+  final Color lightGreen = const Color(0xFFDFF3E8);
+
+  // CONTROLLERS
+  final TextEditingController addressCtrl = TextEditingController();
+  final TextEditingController notesCtrl = TextEditingController();
+
+  // VEHICLE TYPE
+  final List<String> vehicleTypes = [
+    "Sedan",
+    "SUV",
+    "Minivan",
+    "Pickup",
+    "Semi-truck",
+  ];
+  String? selectedVehicle;
+
+  // CLEANING TYPE
+  final List<String> cleaningTypes = [
+    "Standard",
+    "Deep",
+    "Premium",
+  ];
+  String? selectedCleaning;
+
+  // AREA TYPE
+  final List<String> areaTypes = [
+    "Interior Only",
+    "Exterior Only",
+    "Full Detail",
+  ];
+  String? selectedArea;
+
+  // EXTRA TASKS (CHIPS WIBI STYLE)
+  final List<String> extraTasks = [
+    "Interior Deep Shampoo",
+    "Pet Hair Removal",
+    "Stain Removal",
+    "Odor Treatment",
+    "Dashboard Polishing",
+    "Floor Shampoo",
+    "Trunk Deep Cleaning",
+    "Window Interior Cleaning",
+  ];
+  List<String> selectedExtras = [];
+
+  // DATE — 3 DAYS
+  String? selectedDate;
+  late List<String> nextThreeDays;
+
+  // TIME SLOTS
+  final List<String> timeSlots = [
+    "9 AM – 12 PM",
+    "12 PM – 3 PM",
+    "3 PM – 6 PM",
+    "6 PM – 9 PM",
+  ];
   String? selectedTime;
 
-  /// ---- ДНИ: 3 дня ----
-  List<String> getNextThreeDays() {
+  @override
+  void initState() {
+    super.initState();
+
     final now = DateTime.now();
-    return List.generate(3, (i) {
-      final d = now.add(Duration(days: i + 1));
-      return "${d.month}/${d.day}/${d.year}";
-    });
-  }
-
-  /// ---- ВРЕМЯ ----
-  final List<String> timeSlots = [
-    "9 AM - 12 PM",
-    "12 PM - 6 PM",
-    "9 AM - 6 PM",
-    "6 PM - 9 PM",
-  ];
-
-  /// ---- ЦЕНЫ ПО ТИПАМ ----
-  Map<String, dynamic> getPriceForType(String? type) {
-    switch (type) {
-      case "Car Standard Cleaning":
-        return {"min": 120, "max": 140};
-
-      case "Car Deep Cleaning":
-        return {"min": 300, "max": 500};
-
-      case "Truck Standard Cleaning":
-        return {"min": 160, "max": 250};
-
-      case "Truck Deep Cleaning":
-        return {"min": 400, "max": 700};
-
-      default:
-        return {"min": widget.item["minPrice"], "max": widget.item["maxPrice"]};
-    }
+    nextThreeDays = [
+      "${now.month}/${now.day}/${now.year}",
+      "${now.add(const Duration(days: 1)).month}/${now.add(const Duration(days: 1)).day}/${now.add(const Duration(days: 1)).year}",
+      "${now.add(const Duration(days: 2)).month}/${now.add(const Duration(days: 2)).day}/${now.add(const Duration(days: 2)).year}",
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final List<String> threeDays = getNextThreeDays();
-    final prices = getPriceForType(selectedType);
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
+        iconTheme: const IconThemeData(color: Colors.black),
         elevation: 0,
-        title: const Text(
-          "Vehicle Cleaning Booking",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+        title: Text(
+          widget.item["title"],
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            /// ---- IMAGE ----
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
-              child: Image.asset(
-                widget.item["image"],
-                height: 220,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// ---- SELECT TYPE ----
-            const Text(
-              "Select Service Type",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedType,
-                  isExpanded: true,
-                  hint: const Text("Choose type"),
-                  items: [
-                    "Car Standard Cleaning",
-                    "Car Deep Cleaning",
-                    "Truck Standard Cleaning",
-                    "Truck Deep Cleaning",
-                  ].map((type) {
-                    return DropdownMenuItem(
-                      value: type,
-                      child: Text(type),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedType = value;
-                    });
-                  },
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// ---- DAY ----
-            const Text(
-              "Select Day",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedDay,
-                  isExpanded: true,
-                  hint: const Text("Choose day"),
-                  items: threeDays.map((day) {
-                    return DropdownMenuItem(
-                      value: day,
-                      child: Text(day),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedDay = value;
-                    });
-                  },
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 22),
-
-            /// ---- TIME ----
-            const Text(
-              "Select Time",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 8),
-
-            Container(
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: selectedTime,
-                  isExpanded: true,
-                  hint: const Text("Choose time"),
-                  items: timeSlots.map((time) {
-                    return DropdownMenuItem(
-                      value: time,
-                      child: Text(time),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      selectedTime = value;
-                    });
-                  },
-                ),
-              ),
-            ),
-
+            _title("Address"),
+            _addressField(),
             const SizedBox(height: 25),
-
-            /// ---- PRICE ----
-            Text(
-              "\$${prices['min']} - \$${prices['max']}",
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.green,
-              ),
-            ),
-
+            _title("Vehicle Type"),
+            _chipSelector(vehicleTypes, selectedVehicle,
+                (v) => setState(() => selectedVehicle = v)),
             const SizedBox(height: 25),
-
-            /// ---- QUALITY INFO ----
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.yellow.shade100,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Text(
-                "Our technicians provide premium interior cleaning:\n"
-                "• Professional vacuum + steam cleaning\n"
-                "• Deep stain removal\n"
-                "• Leather & fabric restoration\n"
-                "• Pressure air cleaning of vents\n"
-                "• Disinfection & odor removal\n\n"
-                "You only pay after the job is completed.\n"
-                "Booking fee \$9.99 ensures guaranteed arrival.",
-                style: TextStyle(fontSize: 15),
-              ),
-            ),
-
+            _title("Cleaning Type"),
+            _chipSelector(cleaningTypes, selectedCleaning,
+                (v) => setState(() => selectedCleaning = v)),
+            const SizedBox(height: 25),
+            _title("Area"),
+            _chipSelector(areaTypes, selectedArea,
+                (v) => setState(() => selectedArea = v)),
+            const SizedBox(height: 25),
+            _title("Extra Tasks"),
+            _multiChipSelector(extraTasks, selectedExtras),
+            const SizedBox(height: 25),
+            _title("Select Date"),
+            _dateSelector(),
+            const SizedBox(height: 25),
+            _title("Select Time"),
+            _timeSelector(),
+            const SizedBox(height: 25),
+            _title("Notes"),
+            _notesField(),
             const SizedBox(height: 30),
-
-            /// ---- CONFIRM BUTTON ----
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (selectedType == null ||
-                      selectedDay == null ||
-                      selectedTime == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please select all fields"),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-
-// later: send to Telegram
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                ),
-                child: const Text(
-                  "Confirm Booking for 9.99",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 40),
+            _estimatedPrice(),
+            const SizedBox(height: 25),
+            const SizedBox(height: 35),
+            _confirmButton(),
           ],
         ),
       ),
+    );
+  }
+
+  // ------------------------------
+  // TITLE
+  // ------------------------------
+  Widget _title(String text) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700),
+    );
+  }
+
+  // ------------------------------
+  // ADDRESS
+  // ------------------------------
+  Widget _addressField() {
+    return _card(
+      child: TextField(
+        controller: addressCtrl,
+        decoration: const InputDecoration(
+          hintText: "Enter service address",
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(14),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // NOTES
+  // ------------------------------
+  Widget _notesField() {
+    return _card(
+      child: TextField(
+        controller: notesCtrl,
+        maxLines: 3,
+        decoration: const InputDecoration(
+          hintText: "Any additional details…",
+          border: InputBorder.none,
+          contentPadding: EdgeInsets.all(14),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // CHIPS SELECTOR (Single)
+  // ------------------------------
+  Widget _chipSelector(
+      List<String> options, String? selected, Function(String) onSelect) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: options.map((opt) {
+        final active = selected == opt;
+        return ChoiceChip(
+          selected: active,
+          selectedColor: tagGreen,
+          backgroundColor: Colors.grey.shade200,
+          label: Text(
+            opt,
+            style: TextStyle(color: active ? Colors.white : Colors.black),
+          ),
+          onSelected: (_) => onSelect(opt),
+        );
+      }).toList(),
+    );
+  }
+
+  // ------------------------------
+  // MULTI CHIP SELECTOR
+  // ------------------------------
+  Widget _multiChipSelector(List<String> options, List<String> selectedList) {
+    return Wrap(
+      spacing: 10,
+      runSpacing: 10,
+      children: options.map((opt) {
+        final selected = selectedList.contains(opt);
+        return FilterChip(
+          selected: selected,
+          selectedColor: tagGreen,
+          checkmarkColor: Colors.white,
+          backgroundColor: Colors.grey.shade200,
+          label: Text(
+            opt,
+            style: TextStyle(color: selected ? Colors.white : Colors.black),
+          ),
+          onSelected: (v) {
+            setState(() {
+              if (v) {
+                selectedList.add(opt);
+              } else {
+                selectedList.remove(opt);
+              }
+            });
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  // ------------------------------
+  // DATE SELECTOR
+  // ------------------------------
+  Widget _dateSelector() {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 10,
+          children: nextThreeDays.map((day) {
+            final active = selectedDate == day;
+            return ChoiceChip(
+              selected: active,
+              selectedColor: tagGreen,
+              backgroundColor: Colors.grey.shade200,
+              label: Text(
+                day,
+                style: TextStyle(color: active ? Colors.white : Colors.black),
+              ),
+              onSelected: (_) => setState(() => selectedDate = day),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // TIME SELECTOR
+  // ------------------------------
+  Widget _timeSelector() {
+    return _card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Wrap(
+          spacing: 10,
+          children: timeSlots.map((slot) {
+            final active = selectedTime == slot;
+            return ChoiceChip(
+              selected: active,
+              selectedColor: tagGreen,
+              backgroundColor: Colors.grey.shade200,
+              label: Text(
+                slot,
+                style: TextStyle(color: active ? Colors.white : Colors.black),
+              ),
+              onSelected: (_) => setState(() => selectedTime = slot),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // ESTIMATED PRICE (WIBI TEXT)
+  // ------------------------------
+  Widget _estimatedPrice() {
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: lightGreen,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: const Text(
+        "Estimated Price: \$60 – \$300\n\n"
+        "You’ll never be charged until the job is completed.\n"
+        "Our \$9.99 booking fee simply reserves your time slot and begins the search for the best available professional in your area.\n\n"
+        "We’ll notify you as soon as someone accepts your request.",
+        style: TextStyle(fontSize: 15, height: 1.4),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // CONFIRM BUTTON
+  // ------------------------------
+  Widget _confirmButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: () {},
+        style: ElevatedButton.styleFrom(
+          backgroundColor: mainGreen, // WhatsApp color
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        ),
+        child: const Text(
+          "Confirm Booking — \$9.99",
+          style: TextStyle(
+              color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700),
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------
+  // CARD
+  // ------------------------------
+  Widget _card({required Widget child}) {
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.07),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
