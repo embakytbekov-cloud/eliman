@@ -1,12 +1,12 @@
 class TireService {
   final String title;
   final String subtitle;
-  final double minPrice;
-  final double maxPrice;
+  final int minPrice;
+  final int maxPrice;
   final String image;
   final String? badge;
 
-  const TireService({
+  TireService({
     required this.title,
     required this.subtitle,
     required this.minPrice,
@@ -16,28 +16,42 @@ class TireService {
   });
 }
 
-const List<TireService> tireServices = [
+List<TireService> tireServices = [
   TireService(
-    title: "Mobile Tire Change",
-    subtitle: "On-site tire replacement",
-    minPrice: 50,
-    maxPrice: 120,
+    title: "Tire Change (At Home)",
+    subtitle: "Fast mobile tire replacement at your location",
+    minPrice: 40,
+    maxPrice: 80,
     image: "assets/images/tire_change.jpg",
-    badge: "Mobile",
+    badge: "Popular",
+  ),
+  TireService(
+    title: "Flat Tire Repair",
+    subtitle: "Quick puncture repair and plug service",
+    minPrice: 35,
+    maxPrice: 70,
+    image: "assets/images/flat_tire.jpg",
   ),
   TireService(
     title: "Mobile Tire Repair",
-    subtitle: "Flat tire patching & repair",
+    subtitle: "On-site tire inspection & repair",
     minPrice: 40,
     maxPrice: 90,
-    image: "assets/images/tire_repair.jpg",
+    image: "assets/images/mobile_tire_repair.jpg",
   ),
   TireService(
     title: "Tire Rotation",
-    subtitle: "Rotate all 4 tires",
-    minPrice: 35,
+    subtitle: "Improve tire wear with 4-tire rotation",
+    minPrice: 30,
     maxPrice: 60,
     image: "assets/images/tire_rotation.jpg",
+  ),
+  TireService(
+    title: "Fuel Delivery",
+    subtitle: "Emergency gas delivery to your vehicle",
+    minPrice: 30,
+    maxPrice: 70,
+    image: "assets/images/fuel_delivery.jpg",
   ),
   TireService(
     title: "Jump Start",
@@ -48,7 +62,7 @@ const List<TireService> tireServices = [
   ),
   TireService(
     title: "Spare Tire Install",
-    subtitle: "Install your spare tire",
+    subtitle: "Install your spare tire quickly",
     minPrice: 40,
     maxPrice: 80,
     image: "assets/images/spare_tire.jpg",

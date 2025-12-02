@@ -1,48 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:eliman/home/services/tire_service.dart';
 
+// TIRE BOOKING SCREENS
+import 'package:eliman/home/screens/tire/booking/tire_change_at_home_booking_screen.dart';
+import 'package:eliman/home/screens/tire/booking/flat_tire_repair_booking_screen.dart';
+import 'package:eliman/home/screens/tire/booking/mobile_tire_repair_booking_screen.dart';
+import 'package:eliman/home/screens/tire/booking/tire_rotation_booking_screen.dart';
+import 'package:eliman/home/screens/tire/booking/fuel_delivery_booking_screen.dart';
+import 'package:eliman/home/screens/tire/booking/jump_start_booking_screen.dart';
+
 class TireDetailsScreen extends StatelessWidget {
   final TireService item;
 
   const TireDetailsScreen({super.key, required this.item});
 
-  Widget _included(String text) {
+  // -----------------------------------------------------------
+  // OPEN BOOKING SCREEN BY TITLE
+  // -----------------------------------------------------------
+  Widget getBookingScreen(TireService s) {
+    final data = {
+      "title": s.title,
+      "subtitle": s.subtitle,
+      "minPrice": s.minPrice,
+      "maxPrice": s.maxPrice,
+      "image": s.image,
+      "badge": s.badge,
+    };
+
+    switch (s.title) {
+      case "Tire Change (At Home)":
+        return TireChangeAtHomeBookingScreen(item: data);
+
+      case "Flat Tire Repair":
+        return FlatTireRepairBookingScreen(item: data);
+
+      case "Mobile Tire Repair":
+        return MobileTireRepairBookingScreen(item: data);
+
+      case "Tire Rotation":
+        return TireRotationBookingScreen(item: data);
+
+      case "Fuel Delivery":
+        return FuelDeliveryBookingScreen(item: data);
+
+      case "Jump Start":
+        return JumpStartBookingScreen(item: data);
+
+      default:
+        return TireChangeAtHomeBookingScreen(item: data);
+    }
+  }
+
+  // -----------------------------------------------------------
+  // SMALL FEATURE TEXT BUILDER
+  // -----------------------------------------------------------
+  Widget feature(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          const Icon(Icons.check_circle, size: 20, color: Color(0xFF23A373)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-        ],
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Text(
+        text,
+        style: const TextStyle(fontSize: 15, color: Colors.black87),
       ),
     );
   }
 
+  // -----------------------------------------------------------
+  // UI
+  // -----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    final priceText = "\$${item.minPrice.toInt()} - \$${item.maxPrice.toInt()}";
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
+        backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
         title: Text(
           item.title,
           style: const TextStyle(
             color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ),
@@ -62,28 +100,28 @@ class TireDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
 
             /// BADGE
-            if (item.badge != null)
+            if (item.badge != null && item.badge!.isNotEmpty)
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF23A373).withOpacity(0.12),
+                  color: Colors.green.shade100,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   item.badge!,
                   style: const TextStyle(
-                    fontSize: 13,
+                    color: Colors.green,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF23A373),
+                    fontSize: 13,
                   ),
                 ),
               ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             /// TITLE
             Text(
@@ -94,7 +132,19 @@ class TireDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
+
+            /// PRICE
+            Text(
+              "\$${item.minPrice} - \$${item.maxPrice}",
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.green,
+              ),
+            ),
+
+            const SizedBox(height: 20),
 
             /// SUBTITLE
             Text(
@@ -102,49 +152,43 @@ class TireDetailsScreen extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
+                height: 1.4,
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 25),
 
-            /// PRICE
-            Text(
-              priceText,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF23A373),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
+            /// WHAT'S INCLUDED
             const Text(
-              "What's included",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
+              "What's Included",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
 
-            _included("Mobile technician arrival"),
-            _included("On-site inspection"),
-            _included("Fast repair or replacement"),
-            _included("No towing required"),
+            feature("✔️ Mobile tire technician"),
+            feature("✔️ Tools included"),
+            feature("✔️ Same-day service"),
+            feature("✔️ 30–60 min arrival time"),
+            feature("✔️ Secure \$9.99 booking"),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 35),
 
+            /// BOOK NOW BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-// позже Telegram booking
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => getBookingScreen(item),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF23A373),
-                  padding: const EdgeInsets.symmetric(vertical: 18),
+                  minimumSize: const Size(double.infinity, 55),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
                   ),
@@ -152,15 +196,15 @@ class TireDetailsScreen extends StatelessWidget {
                 child: const Text(
                   "Book Now",
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 30),
           ],
         ),
       ),
