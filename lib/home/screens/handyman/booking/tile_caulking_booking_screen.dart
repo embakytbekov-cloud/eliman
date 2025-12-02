@@ -1,39 +1,42 @@
 import 'package:flutter/material.dart';
 
-class WindowBlindsBookingScreen extends StatefulWidget {
+class TileCaulkingBookingScreen extends StatefulWidget {
   final Map<String, dynamic> item;
 
-  const WindowBlindsBookingScreen({super.key, required this.item});
+  const TileCaulkingBookingScreen({super.key, required this.item});
 
   @override
-  State<WindowBlindsBookingScreen> createState() =>
-      _WindowBlindsBookingScreenState();
+  State<TileCaulkingBookingScreen> createState() =>
+      _TileCaulkingBookingScreenState();
 }
 
-class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
+class _TileCaulkingBookingScreenState extends State<TileCaulkingBookingScreen> {
   final Color green = const Color(0xFF1C6E54);
   final Color buttonGreen = const Color(0xFF25D366);
 
   final TextEditingController addressCtrl = TextEditingController();
   final TextEditingController notesCtrl = TextEditingController();
 
-  int blindsCount = 1;
+  // HOW MANY AREAS?
+  int areas = 1;
 
+  // DATE / TIME
   String? selectedDate;
   String? selectedTime;
-
   late List<String> next3Days;
 
   final List<String> timeSlots = [
     "9 AM – 12 PM",
     "12 PM – 3 PM",
     "3 PM – 6 PM",
+    "6 PM – 9 PM",
   ];
 
   @override
   void initState() {
     super.initState();
     final now = DateTime.now();
+
     next3Days = [
       "${now.month}/${now.day}/${now.year}",
       "${now.add(const Duration(days: 1)).month}/${now.add(const Duration(days: 1)).day}/${now.year}",
@@ -46,8 +49,8 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.item["title"]),
-        backgroundColor: Colors.white,
         elevation: 0,
+        backgroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       backgroundColor: Colors.white,
@@ -65,18 +68,16 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
               ),
             )),
             const SizedBox(height: 20),
-            _title("How many blinds?"),
-            _counter("Blinds", blindsCount, (v) {
-              setState(() => blindsCount = v);
-            }),
+            _title("How many areas need caulking?"),
+            _counter("Areas", areas, (v) => setState(() => areas = v)),
             const SizedBox(height: 20),
             _title("Select Date"),
-            _choiceChips(next3Days, selectedDate, (v) {
+            _choice(next3Days, selectedDate, (v) {
               setState(() => selectedDate = v);
             }),
             const SizedBox(height: 20),
             _title("Select Time"),
-            _choiceChips(timeSlots, selectedTime, (v) {
+            _choice(timeSlots, selectedTime, (v) {
               setState(() => selectedTime = v);
             }),
             const SizedBox(height: 20),
@@ -85,15 +86,15 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
               controller: notesCtrl,
               maxLines: 3,
               decoration: const InputDecoration(
-                hintText: "Optional notes…",
                 border: InputBorder.none,
+                hintText: "Describe tile area, mold, water damage…",
               ),
             )),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
             _estimated(),
-            const SizedBox(height: 20),
-            _trustBlock(),
-            const SizedBox(height: 20),
+            const SizedBox(height: 22),
+            _trust(),
+            const SizedBox(height: 22),
             _confirm(),
           ],
         ),
@@ -101,41 +102,42 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
     );
   }
 
+  // ---------------- widgets ----------------
+
   Widget _title(String t) => Text(
         t,
         style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
       );
 
-  Widget _card(Widget child) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withOpacity(0.07),
-              blurRadius: 10,
-              offset: const Offset(0, 3))
-        ],
-      ),
-      child: child,
-    );
-  }
+  Widget _card(Widget child) => Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.07),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              )
+            ]),
+        child: child,
+      );
 
-  Widget _choiceChips(
-      List<String> list, String? selected, Function(String) onSelect) {
+  Widget _choice(List<String> list, String? selected, Function(String) onSel) {
     return Wrap(
       spacing: 10,
       children: list.map((e) {
         final sel = selected == e;
         return ChoiceChip(
-          label: Text(e,
-              style: TextStyle(color: sel ? Colors.white : Colors.black)),
+          label: Text(
+            e,
+            style: TextStyle(color: sel ? Colors.white : Colors.black),
+          ),
           selected: sel,
           selectedColor: green,
           backgroundColor: Colors.grey.shade200,
-          onSelected: (_) => onSelect(e),
+          onSelected: (_) => onSel(e),
         );
       }).toList(),
     );
@@ -154,13 +156,15 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
               }),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: Text("$value",
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold)),
+                child: Text(
+                  "$value",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
               _circle(Icons.add, () => onChange(value + 1)),
             ],
-          )
+          ),
         ],
       ),
     );
@@ -170,8 +174,8 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
     return InkWell(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(shape: BoxShape.circle, color: green),
         padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(shape: BoxShape.circle, color: green),
         child: Icon(i, color: Colors.white, size: 18),
       ),
     );
@@ -180,19 +184,21 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
   Widget _estimated() => Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: const Color(0xFFDFF3E8),
-            borderRadius: BorderRadius.circular(14)),
+          color: const Color(0xFFDFF3E8),
+          borderRadius: BorderRadius.circular(14),
+        ),
         child: Text(
           "Estimated Price: \$${widget.item["minPrice"]} – \$${widget.item["maxPrice"]}",
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
         ),
       );
 
-  Widget _trustBlock() => Container(
+  Widget _trust() => Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-            color: const Color(0xFFDFF3E8),
-            borderRadius: BorderRadius.circular(14)),
+          color: const Color(0xFFDFF3E8),
+          borderRadius: BorderRadius.circular(14),
+        ),
         child: const Text(
           "You pay the handyman only after the job is fully completed.\n\n"
           "A small \$9.99 booking fee secures your appointment and assigns a trusted professional.\n\n"
@@ -205,10 +211,11 @@ class _WindowBlindsBookingScreenState extends State<WindowBlindsBookingScreen> {
         width: double.infinity,
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-              backgroundColor: buttonGreen,
-              padding: const EdgeInsets.symmetric(vertical: 18),
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14))),
+            backgroundColor: buttonGreen,
+            padding: const EdgeInsets.symmetric(vertical: 18),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          ),
           onPressed: () {},
           child: const Text(
             "Confirm Booking — \$9.99",
