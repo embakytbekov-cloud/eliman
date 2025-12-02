@@ -1,25 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:eliman/home/services/appliance_service.dart';
 
+// BOOKING SCREENS (добавим по очереди)
+import 'package:eliman/home/screens/appliance/booking/washer_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/dryer_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/refrigerator_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/dishwasher_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/oven_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/stove_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/microwave_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/garbage_disposal_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/ice_maker_repair_booking.dart';
+import 'package:eliman/home/screens/appliance/booking/range_hood_repair_booking.dart';
+
 class ApplianceDetailsScreen extends StatelessWidget {
   final ApplianceService item;
 
   const ApplianceDetailsScreen({super.key, required this.item});
 
-  Widget _included(String text) {
+  // -----------------------------------------------------------
+  // SWITCH — открываем нужный booking screen
+  // -----------------------------------------------------------
+  Widget getBookingScreen(ApplianceService s) {
+    final data = {
+      "title": s.title,
+      "subtitle": s.subtitle,
+      "minPrice": s.minPrice,
+      "maxPrice": s.maxPrice,
+      "image": s.image,
+      "badge": s.badge,
+    };
+
+    switch (s.title) {
+      case "Washer Repair":
+        return WasherRepairBookingScreen(item: data);
+
+      case "Dryer Repair":
+        return DryerRepairBookingScreen(item: data);
+
+      case "Refrigerator Repair":
+        return RefrigeratorRepairBookingScreen(item: data);
+
+      case "Dishwasher Repair":
+        return DishwasherRepairBookingScreen(item: data);
+
+      case "Oven Repair":
+        return OvenRepairBookingScreen(item: data);
+
+      case "Stove Repair":
+        return StoveRepairBookingScreen(item: data);
+
+      case "Microwave Repair":
+        return MicrowaveRepairBookingScreen(item: data);
+
+      case "Garbage Disposal":
+        return GarbageDisposalRepairBookingScreen(item: data);
+
+      case "Ice Maker Repair":
+        return IceMakerRepairBookingScreen(item: data);
+
+      case "Range Hood Repair":
+        return RangeHoodRepairBookingScreen(item: data);
+
+      default:
+        return WasherRepairBookingScreen(item: data);
+    }
+  }
+
+  // -----------------------------------------------------------
+  // FEATURE BUILDER
+  // -----------------------------------------------------------
+  Widget feature(String text) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: 6),
       child: Row(
         children: [
-          const Icon(Icons.check_circle, size: 20, color: Color(0xFF23A373)),
+          const Icon(Icons.check_circle, color: Colors.green, size: 18),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(
-                fontSize: 15,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 15, color: Colors.black87),
             ),
           ),
         ],
@@ -27,10 +88,11 @@ class ApplianceDetailsScreen extends StatelessWidget {
     );
   }
 
+  // -----------------------------------------------------------
+  // UI
+  // -----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    final priceText = "\$${item.minPrice.toInt()} - \$${item.maxPrice.toInt()}";
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -40,9 +102,9 @@ class ApplianceDetailsScreen extends StatelessWidget {
         title: Text(
           item.title,
           style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w700,
             color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -56,45 +118,36 @@ class ApplianceDetailsScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
               child: Image.asset(
                 item.image,
-                height: 220,
+                height: 230,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
 
+            /// BADGE
             if (item.badge != null && item.badge!.isNotEmpty)
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF23A373).withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(8),
+                  color: Colors.green.shade100,
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   item.badge!,
                   style: const TextStyle(
-                    color: Color(0xFF23A373),
-                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                    fontWeight: FontWeight.w600,
                     fontSize: 13,
                   ),
                 ),
               ),
 
-            if (item.badge != null && item.badge!.isNotEmpty)
-              const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
-            Text(
-              item.title,
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-
-            const SizedBox(height: 8),
-
+            /// SUBTITLE
             Text(
               item.subtitle,
               style: const TextStyle(
@@ -104,41 +157,46 @@ class ApplianceDetailsScreen extends StatelessWidget {
               ),
             ),
 
-            const SizedBox(height: 18),
+            const SizedBox(height: 20),
 
+            /// PRICE
             Text(
-              priceText,
+              "\$${item.minPrice} – \$${item.maxPrice}",
               style: const TextStyle(
-                fontSize: 20,
+                fontSize: 23,
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF23A373),
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 30),
 
+            /// WHAT'S INCLUDED
             const Text(
-              "What's included",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
+              "What’s Included",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
-
             const SizedBox(height: 12),
 
-            _included("Diagnostic and professional inspection"),
-            _included("Repair or replacement of basic parts (if needed)"),
-            _included("Safety check after repair"),
-            _included("Clean workspace after job is done"),
+            feature("✔️ Licensed appliance technician"),
+            feature("✔️ Diagnostic & full inspection"),
+            feature("✔️ Tools & basic parts included"),
+            feature("✔️ 30–90 min arrival time"),
+            feature("✔️ \$9.99 WIBIM secure booking"),
 
-            const SizedBox(height: 32),
+            const SizedBox(height: 35),
 
+            /// BOOK NOW BUTTON
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-// позже добавим букинг / Telegram
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => getBookingScreen(item),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF23A373),
@@ -151,14 +209,14 @@ class ApplianceDetailsScreen extends StatelessWidget {
                   "Book Now",
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     color: Colors.white,
                   ),
                 ),
               ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 40),
           ],
         ),
       ),
